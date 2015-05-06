@@ -41,10 +41,13 @@ ERRMSG := "Please read, https://cpanel.wiki/display/AL/Setting+up+yourself+for+u
 OBS_USERNAME := $(shell grep -A5 '[build.dev.cpanel.net]' ~/.oscrc | awk -F= '/user=/ {print $$2}')
 # NOTE: OBS only like ascii alpha-numeric characters
 GIT_BRANCH := $(shell git branch | awk '/^*/ { print $$2 }' | sed -e 's/[^a-z0-9]/_/ig')
+ifdef bamboo_repository_git_branch
+GIT_BRANCH := $(bamboo_repository_git_branch)
+endif
 BUILD_TARGET := home:$(OBS_USERNAME):$(OBS_PROJECT):$(GIT_BRANCH)
 OBS_WORKDIR := $(BUILD_TARGET)/$(OBS_PACKAGE)
 
-.PHONY: all local obs check build-clean build-init
+.PHONY: all clean local vars chroot obs check build-clean build-init
 
 #-----------------------
 # Primary make targets
@@ -75,7 +78,7 @@ obs: check
 # build environment and letting you manually run commands.
 chroot: check
 	make build-init
-	cd OBS/$(OBS_WORKDIR) && osc chroot --local-package -o EA4_CentOS_6.5 $(ARCH) $(OBS_PACKAGE)
+	cd OBS/$(OBS_WORKDIR) && osc chroot --local-package -o CentOS_6.5_standard $(ARCH) $(OBS_PACKAGE)
 	make build-clean
 
 # Debug target: Prints out variables to ensure they're correct
