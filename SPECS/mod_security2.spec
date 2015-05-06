@@ -21,7 +21,7 @@
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
-Version: 2.9.0
+Version: 2.8.0
 Release: 0%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -35,6 +35,7 @@ BuildRequires: ea-apache2-devel libxml2-devel pcre-devel curl-devel lua-devel
 Requires: ea-httpd ea-apache2 ea-apache2-mmn = %{_httpd_mmn}
 Requires: ea-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
+Patch1: 2.8.0-slash-notation.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -45,6 +46,7 @@ as a powerful umbrella - shielding web applications from attacks.
 %prep
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .concurrent
+%patch1 -p1 -b .slash
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -90,10 +92,7 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
-* Thu Mar 21 2015 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-0
-- Upgraded to 2.9.0
-
-* Thu Mar 19 2015 S. Kurt Newman <kurt.newman@cpanel.net> - 2.8.0-0
+* Thu Mar 19 2015 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-0
 - Upgraded to 2.8.0
 
 * Thu Apr  3 2014 Daniel Kopecek <dkopecek@redhat.com> - 2.7.3-5
