@@ -32,7 +32,7 @@ Source2: loadmod.conf
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
 BuildRequires: ea-apache2-devel libxml2-devel pcre-devel curl-devel lua-devel
-Requires: ea-httpd ea-apache2 ea-apache2-mmn = %{_httpd_mmn}
+Requires: ea-apache2-config ea-apache2 ea-apache2-mmn = %{_httpd_mmn}
 Requires: ea-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 Patch1: 2.8.0-slash-notation.cpanel.patch
