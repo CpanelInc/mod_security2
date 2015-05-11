@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.8.0
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -92,7 +92,11 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
-* Thu Mar 19 2015 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-0
+* Mon May 11 2015 Darren Mobley <darren@cpanel.net> - 2.8.0-1
+- Changed name of ea-httpd rpm dependancy to ea-apache2-config
+- Fixed previous changelog entry claiming version was updated to 2.9.0
+
+* Thu Mar 19 2015 S. Kurt Newman <kurt.newman@cpanel.net> - 2.8.0-0
 - Upgraded to 2.8.0
 
 * Thu Apr  3 2014 Daniel Kopecek <dkopecek@redhat.com> - 2.7.3-5
