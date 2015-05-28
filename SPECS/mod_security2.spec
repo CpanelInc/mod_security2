@@ -1,5 +1,5 @@
 # Defining the package namespace
-%global ns_name ea
+%global ns_name ea-apache24
 %global upstream_name modsecurity
 %global module_name mod_security2
 
@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.8.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -31,9 +31,9 @@ Source1: cfg.conf
 Source2: loadmod.conf
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
-BuildRequires: ea-apache2-devel libxml2-devel pcre-devel curl-devel lua-devel
-Requires: ea-apache2-config ea-apache2 ea-apache2-mmn = %{_httpd_mmn}
-Requires: ea-mod_unique_id
+BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
+Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
+Requires: ea-apache24-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 Patch1: 2.8.0-slash-notation.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
@@ -92,6 +92,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Thu May 28 2015 Darren Mobley <darren@cpanel.net> - 2.8.0-2
+- Changed name from ea-apache2 to ea-apache24 
+
 * Mon May 11 2015 Darren Mobley <darren@cpanel.net> - 2.8.0-1
 - Changed name of ea-httpd rpm dependancy to ea-apache2-config
 - Fixed previous changelog entry claiming version was updated to 2.9.0
