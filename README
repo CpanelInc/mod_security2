@@ -1,1 +1,3 @@
-EasyApache 4 mod_security2 plugin for Apache
+EasyApache 4 mod_security2 plugin for Apache.
+
+This package contains mod_security + cPanel's configurations for mod_security.
