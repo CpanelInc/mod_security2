@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.8.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
