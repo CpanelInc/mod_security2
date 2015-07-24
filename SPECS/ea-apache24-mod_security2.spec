@@ -21,8 +21,8 @@
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
-Version: 2.8.0
-Release: 3%{?dist}
+Version: 2.9.0
+Release: 0%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -35,7 +35,6 @@ BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
 Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
-Patch1: 2.8.0-slash-notation.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -46,7 +45,6 @@ as a powerful umbrella - shielding web applications from attacks.
 %prep
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .concurrent
-%patch1 -p1 -b .slash
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -92,8 +90,11 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Fri Jul 24 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-0
+- Updated to 2.9.0
+
 * Thu May 28 2015 Darren Mobley <darren@cpanel.net> - 2.8.0-2
-- Changed name from ea-apache2 to ea-apache24 
+- Changed name from ea-apache2 to ea-apache24
 
 * Mon May 11 2015 Darren Mobley <darren@cpanel.net> - 2.8.0-1
 - Changed name of ea-httpd rpm dependancy to ea-apache2-config
