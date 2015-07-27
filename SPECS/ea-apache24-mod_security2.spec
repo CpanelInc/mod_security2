@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -31,6 +31,8 @@ Source1: cfg.conf
 Source2: loadmod.conf
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
+# Logging problems under ruid2 and itk, so let's just conflict
+Conflicts: %{ns_name}-mod_ruid2 %{ns_name}-mod_mpm_itk
 BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
 Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id
@@ -90,6 +92,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Mon Jul 27 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-1
+- Added conflicts with mod_ruid2 and mod_mpm_itk
+
 * Fri Jul 24 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-0
 - Updated to 2.9.0
 
