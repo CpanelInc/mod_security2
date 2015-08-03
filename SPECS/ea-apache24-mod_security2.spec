@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -34,6 +34,7 @@ Conflicts: mod_security
 # Logging problems under ruid2 and itk, so let's just conflict
 Conflicts: %{ns_name}-mod_ruid2 %{ns_name}-mod_mpm_itk
 BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
+BuildRequires: ea-apr-devel ea-apr-util-devel
 Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
@@ -56,6 +57,7 @@ as a powerful umbrella - shielding web applications from attacks.
 %build
 %configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
+           --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs}
 # remove rpath
 %{__sed} -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -92,6 +94,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Fri Jul 31 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-2
+- Added references to the moved apr and apu
+
 * Mon Jul 27 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-1
 - Added conflicts with mod_ruid2 and mod_mpm_itk
 
