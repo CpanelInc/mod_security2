@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -82,6 +82,14 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %clean
 %{__rm} -rf %{buildroot}
 
+%post
+# Tell tailwatchd to start monitoring modsec_audit.log
+[[ -x /usr/local/cpanel/scripts/restartsrv_tailwatchd ]] && /usr/local/cpanel/scripts/restartsrv_tailwatchd &>/dev/null || /bin/true
+
+%postun
+# Tell tailwatchd to stop monitoring modsec_audit.log
+[[ -x /usr/local/cpanel/scripts/restartsrv_tailwatchd ]] && /usr/local/cpanel/scripts/restartsrv_tailwatchd &>/dev/null || /bin/true
+
 %files
 # - EA4 RPM only deploys 2 configuration files.
 # - One config loads the module
@@ -94,6 +102,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Thu Sep 10 2015 S. Kurt Newman <kurt.newman@cpanel.net>  - 2.9.0-3
+- Restart tailwatchd to re-read monitoring need of modsec_audit.log (CPANEL-1098)
+
 * Fri Jul 31 2015 Trinity Quirk <trinity.quirk@cpanel.net> - 2.9.0-2
 - Added references to the moved apr and apu
 
