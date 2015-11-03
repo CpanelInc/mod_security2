@@ -22,7 +22,7 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -33,6 +33,7 @@ Source2: loadmod.conf
 Conflicts: mod_security
 # Logging problems under ruid2 and itk, so let's just conflict
 Conflicts: %{ns_name}-mod_ruid2 %{ns_name}-mod_mpm_itk
+Conflicts: ea-apache24-mpm = forked, ea-apache24-mod_mpm_prefork
 BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
 Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
@@ -102,6 +103,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %config(noreplace) %{_httpd_modconfdir}/*.conf
 
 %changelog
+* Tue Nov 03 2015 Julian Brown <julian.brown@cpanel.net>  - 2.9.0-4
+- Hard code a conflict in place to make EA4 UI able to detect issues with MPM.
+
 * Thu Sep 10 2015 S. Kurt Newman <kurt.newman@cpanel.net>  - 2.9.0-3
 - Restart tailwatchd to re-read monitoring need of modsec_audit.log (CPANEL-1098)
 
