@@ -22,20 +22,21 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
 Source: https://www.modsecurity.org/tarball/%{version}/%{upstream_name}-%{version}.tar.gz
 Source1: cfg.conf
 Source2: loadmod.conf
+
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
-# Logging problems under ruid2 and itk, so let's just conflict
-Conflicts: %{ns_name}-mod_ruid2 %{ns_name}-mod_mpm_itk
 BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
-Requires: ea-apache24-config ea-apache24 ea-apache24-mmn = %{_httpd_mmn}
+BuildRequires: lua-devel >= 5.1, libxml2-devel
+Requires: lua >= 5.1, libxml2
+Requires: ea-apache24-config, ea-apache24, ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
@@ -59,7 +60,9 @@ as a powerful umbrella - shielding web applications from attacks.
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs}
-# remove rpath
+# TODO: If we ever need to link off of our versions of software in /opt/cpanel,
+# then we'll want to remove these 2 lines since hard-coding rpath is an intricate
+# part of using cpanel SCL libraries.
 %{__sed} -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 %{__sed} -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
@@ -74,14 +77,19 @@ as a powerful umbrella - shielding web applications from attacks.
 # install loadmodule configuration
 %{__mkdir_p} %{buildroot}%{_httpd_modconfdir}
 %{__install} %{SOURCE2} %{buildroot}%{_httpd_modconfdir}/800-%{module_name}.conf
+# install modsecurity configuration
 %{__mkdir_p} %{buildroot}%{_httpd_confdir}
 %{__install} %{SOURCE1}.new %{buildroot}%{_httpd_confdir}/modsec2.conf
 touch %{buildroot}/%{_httpd_confdir}/modsec2.user.conf
 touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
+%{__mkdir_p} %{buildroot}/%{_httpd_dir}/logs/modsec_audit
 
 %clean
 %{__rm} -rf %{buildroot}
 
+# These don't use univeral hooks.  Removing the mod_security2 package would remove the code needed
+# to bounce tailwatchd.  The alternative is to place a univeral-hook into the ea-apache24-config-runtime
+# package; thus introducing more "action at a distance" code.
 %post
 # Tell tailwatchd to start monitoring modsec_audit.log
 [[ -x /usr/local/cpanel/scripts/restartsrv_tailwatchd ]] && /usr/local/cpanel/scripts/restartsrv_tailwatchd &>/dev/null || /bin/true
@@ -98,10 +106,26 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %defattr (0644,root,root,0755)
 %doc CHANGES LICENSE README.TXT NOTICE
 %attr(0755,root,root) %{_httpd_moddir}/mod_security2.so
-%config(noreplace) %{_httpd_confdir}/*.conf
-%config(noreplace) %{_httpd_modconfdir}/*.conf
+%{_httpd_modconfdir}/*.conf
+# Don't make modsec2.conf a config file, we need to ensure we own this and can fix as needed
+%attr(0600,root,root) %{_httpd_confdir}/modsec2.conf
+# These 2 files are config because they are modified directly/indirectly by users and admin
+%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec2.cpanel.conf
+%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec2.user.conf
+# Prevent users from listing the directory
+%attr(0733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Mon May 30 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-6
+- Added explicit lua and xml2 Requires statements (EA-4433)
+- Remove mpm_itk and mod_ruid2 conflicts (EA-4433)
+- Added more comments to explain portions of spec file (EA-4433)
+- Arrest control of modsec2.conf so we can ensure proper Apache logging type (EA-4433)
+- Arrest control of conf.modules.d/800-mod_security2.conf (EA-4433)
+- RPM now creates logs/modsec_audit dir for concurrent logging (EA-4433)
+- Added comments to configuration files to help guide administrator (EA-4433)
+- Use module name, not file name in configuration file (EA-4654)
+
 * Tue Nov 03 2015 Julian Brown <julian.brown@cpanel.net>  - 2.9.0-5
 - Undo previous change.
 
