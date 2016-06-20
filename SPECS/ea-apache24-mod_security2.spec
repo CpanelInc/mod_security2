@@ -22,7 +22,9 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 6%{?dist}
+# Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
+%define release_prefix 9
+Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
@@ -116,6 +118,9 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 %attr(0733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 2.9.0-9
+- EA-4383: Update Release value to OBS-proof versioning
+
 * Mon May 30 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-6
 - Added explicit lua and xml2 Requires statements (EA-4433)
 - Remove mpm_itk and mod_ruid2 conflicts (EA-4433)
