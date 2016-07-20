@@ -1,0 +1,326 @@
+#!/usr/local/cpanel/3drparty/bin/perl -w
+
+# cpanel - i/mod_security2.conf.t                 Copyright(c) 2016 cPanel, Inc.
+#                                                           All rights reserved.
+# copyright@cpanel.net                                         http://cpanel.net
+# This code is subject to the cPanel license. Unauthorized copying is prohibited
+
+# Integration testing for mod_security2.conf
+
+package i::mod_security2_conf;
+
+use strict;
+use warnings;
+use FindBin;
+
+use lib "$FindBin::Bin/lib";
+
+use Try::Tiny;
+use Test::More tests => 37;
+use Test::NoWarnings;
+
+use File::Basename ();
+use File::Path     ();
+use File::Slurp    ();
+
+my $test_dir = File::Basename::dirname(__FILE__);
+
+{
+    note("Testing old EA4 modsec config to new EA4 modsec config upgrade");
+
+    # one test for each [testcase/filesystem_checks/exists] entry
+    # one test for each [testcase/filesystem_checks/contents] entry
+    my @testcases = (
+        {
+            'test_name'        => 'test0001',
+            'input_filesystem' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                },
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'exists'    => 0,
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'exists'    => 0,
+                },
+            ],
+        },
+        {
+            'test_name'        => 'test0002',
+            'input_filesystem' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                }
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'exists'    => 0,
+                },
+            ],
+        },
+        {
+            'test_name'        => 'test0003',
+            'input_filesystem' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                }
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'exists'    => 0,
+                },
+            ],
+        },
+        {
+            'test_name'        => 'test0004',
+            'input_filesystem' => [
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                }
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '',
+                },
+            ],
+        },
+        {
+            'test_name'        => 'test0005',
+            'input_filesystem' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                }
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+            ],
+        },
+        {
+            'test_name'        => 'test0006',
+            'input_filesystem' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf.PREVIOUS',
+                    'contents'  => '# A comment in modsec2.user.conf.PREVIOUS',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf.PREVIOUS',
+                    'contents'  => '# A comment in modsec2.cpanel.conf.PREVIOUS',
+                },
+                {
+                    'file_name'   => '/usr/local/cpanel/scripts/restartsrv_tailwatchd',
+                    'contents'    => '#!/bin/bash\nexit 0;\n',
+                    'permissions' => 0755,
+                }
+            ],
+            'filesystem_checks' => [
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.user.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf',
+                    'exists'    => 0,
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.user.conf.PREVIOUS',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.user.conf.PREVIOUS',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.user.conf.PREVIOUS',
+                    'exists'    => 0,
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.cpanel.conf',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf',
+                    'exists'    => 0,
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec/modsec2.cpanel.conf.PREVIOUS',
+                    'exists'    => 1,
+                    'contents'  => '# A comment in modsec2.cpanel.conf.PREVIOUS',
+                },
+                {
+                    'file_name' => '/etc/apache2/conf.d/modsec2.cpanel.conf.PREVIOUS',
+                    'exists'    => 0,
+                },
+            ],
+        }
+    );
+
+    foreach my $testcase_ref (@testcases) {
+
+        my $test_name = $testcase_ref->{'test_name'};
+        note("running test case $test_name\n");
+        my $test_root = "$test_dir\/$test_name\/root";
+
+        #note ("  test root is $test_root");
+        File::Path::rmtree("$test_dir\/$test_name");
+        File::Path::make_path($test_root);
+
+        #note ("  setting up test");
+        #note ("    initializing private rpm database");
+
+        note("    installing bootstrap chroot environment");
+        system( "rpmdb", "--initdb", "--root",     $test_root );
+        system( "rpm",   "--root",   "$test_root", "--install", "--nodeps", "http://mirror.centos.org/centos/6/os/x86_64/Packages/filesystem-2.4.30-3.el6.x86_64.rpm" );
+        system( "rpm",   "--root",   "$test_root", "--install", "--nodeps", "http://mirror.centos.org/centos/6/os/x86_64/Packages/centos-release-6-8.el6.centos.12.3.x86_64.rpm" );
+        system( "rpm", "--import", "--root", "$test_root", "$test_root/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6" );
+        system( "yum", "--quiet", "--installroot", "$test_root", "install", "--skip-broken", "-y", "rpm", "yum", "coreutils" );
+        system( "rm", "-rf", "$test_root/var/lib/rpm" );
+
+        note("    installing chroot environment");
+        system( "chroot", $test_root, "/usr/bin/rpmdb", "--initdb" );
+        system( "chroot", $test_root, "/bin/rpm",       "--import", "/etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-6" );
+        system( "chroot", $test_root, "/bin/rpm",       "--install", "--nodeps", "http://mirror.centos.org/centos/6/os/x86_64/Packages/centos-release-6-8.el6.centos.12.3.x86_64.rpm" );
+        system( "chroot", $test_root, "/usr/bin/yum",   "--quiet", "install", "--skip-broken", "-y", "rpm", "yum" );
+
+        #note ("    installing precondition files");
+        my $input_fs = $testcase_ref->{'input_filesystem'};
+        foreach my $input_file (@$input_fs) {
+            my $file_name     = $input_file->{'file_name'};
+            my $file_contents = $input_file->{'contents'};
+            my $file_dirname  = File::Basename::dirname($file_name);
+            File::Path::make_path("$test_root$file_dirname");
+
+            #note ("    $file_name at $test_root$file_dirname");
+            open( my $file_handle, '>', "$test_root$file_name" )
+              or die("could not open $test_root$file_name for writing");
+            print( $file_handle $file_contents );
+            close($file_handle);
+            if ( $input_file->{'permissions'} ) {
+                chmod $input_file->{'permissions'}, "$test_root$file_name";
+            }
+        }
+
+        #note ("    installing rpms");
+        foreach my $rpm_file (@ARGV) {
+            chomp($rpm_file);
+            my $rpm_basename = File::Basename::basename($rpm_file);
+            system( "install", "-D", $rpm_file, "$test_root\/$rpm_basename" );
+            system( "chroot", $test_root, "/bin/rpm", "--nodeps", "--install", $rpm_basename );
+        }
+
+        note("  beginning tests");
+        my $check_fs = $testcase_ref->{'filesystem_checks'};
+        foreach my $check_file (@$check_fs) {
+            my $file_name = $check_file->{'file_name'};
+            if ( $check_file->{'exists'} ) {
+                ok( -e "$test_root$file_name", "$test_name: check existance of $test_root$file_name" );
+            }
+            else {
+                ok( !( -e "$test_root$file_name" ), "$test_name: check nonexistance of $test_root$file_name" );
+            }
+            if ( exists $check_file->{'contents'} ) {
+                if ( -e "$test_root$file_name" ) {
+                    my $contents = File::Slurp::read_file("$test_root$file_name");
+                    is( $contents, "$check_file->{'contents'}", "$test_name: check contents of $test_root$file_name" );
+                }
+                else {
+                    fail("$test_name: check contents of $test_root$file_name");
+                }
+            }
+        }
+        File::Path::rmtree("$test_dir\/$test_name");
+    }
+}
+

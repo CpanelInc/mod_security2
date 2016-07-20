@@ -22,13 +22,17 @@
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
-Release: 6%{?dist}
+# Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
+%define release_prefix 10
+Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
 Source: https://www.modsecurity.org/tarball/%{version}/%{upstream_name}-%{version}.tar.gz
-Source1: cfg.conf
+Source1: modsec2.conf
 Source2: loadmod.conf
+Source3: modsec2.user.conf
+Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
@@ -54,6 +58,12 @@ as a powerful umbrella - shielding web applications from attacks.
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
     -e "s|@HTTPD_CONFDIR@|%{_httpd_confdir}|" \
     %{SOURCE1} > %{SOURCE1}.new
+%{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
+    -e "s|@HTTPD_CONFDIR@|%{_httpd_confdir}|" \
+    %{SOURCE3} > %{SOURCE3}.new
+%{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
+    -e "s|@HTTPD_CONFDIR@|%{_httpd_confdir}|" \
+    %{SOURCE4} > %{SOURCE4}.new
 
 %build
 %configure --enable-pcre-match-limit=1000000 \
@@ -79,9 +89,10 @@ as a powerful umbrella - shielding web applications from attacks.
 %{__install} %{SOURCE2} %{buildroot}%{_httpd_modconfdir}/800-%{module_name}.conf
 # install modsecurity configuration
 %{__mkdir_p} %{buildroot}%{_httpd_confdir}
+%{__mkdir_p} %{buildroot}%{_httpd_confdir}/modsec
 %{__install} %{SOURCE1}.new %{buildroot}%{_httpd_confdir}/modsec2.conf
-touch %{buildroot}/%{_httpd_confdir}/modsec2.user.conf
-touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
+%{__install} %{SOURCE3}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.user.conf
+%{__install} %{SOURCE4}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.cpanel.conf
 %{__mkdir_p} %{buildroot}/%{_httpd_dir}/logs/modsec_audit
 
 %clean
@@ -91,6 +102,13 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 # to bounce tailwatchd.  The alternative is to place a univeral-hook into the ea-apache24-config-runtime
 # package; thus introducing more "action at a distance" code.
 %post
+# Upgrade the ea4 old config locations to the EA4 new config locations
+# No need to concern ourselves with EA3 here, because it writes to the new EA4 location
+[[ -e %{_httpd_confdir}/modsec2.user.conf ]] && %{__mv} %{_httpd_confdir}/modsec2.user.conf %{_httpd_confdir}/modsec/modsec2.user.conf || /bin/true
+[[ -e %{_httpd_confdir}/modsec2.user.conf.PREVIOUS ]] && %{__mv} %{_httpd_confdir}/modsec2.user.conf.PREVIOUS %{_httpd_confdir}/modsec/modsec2.user.conf.PREVIOUS || /bin/true
+[[ -e %{_httpd_confdir}/modsec2.cpanel.conf ]] && %{__mv} %{_httpd_confdir}/modsec2.cpanel.conf %{_httpd_confdir}/modsec/modsec2.cpanel.conf || /bin/true
+[[ -e %{_httpd_confdir}/modsec2.cpanel.conf.PREVIOUS ]] && %{__mv} %{_httpd_confdir}/modsec2.cpanel.conf.PREVIOUS %{_httpd_confdir}/modsec/modsec2.cpanel.conf.PREVIOUS || /bin/true
+
 # Tell tailwatchd to start monitoring modsec_audit.log
 [[ -x /usr/local/cpanel/scripts/restartsrv_tailwatchd ]] && /usr/local/cpanel/scripts/restartsrv_tailwatchd &>/dev/null || /bin/true
 
@@ -110,12 +128,18 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 # Don't make modsec2.conf a config file, we need to ensure we own this and can fix as needed
 %attr(0600,root,root) %{_httpd_confdir}/modsec2.conf
 # These 2 files are config because they are modified directly/indirectly by users and admin
-%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec2.cpanel.conf
-%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec2.user.conf
+%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.cpanel.conf
+%attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.user.conf
 # Prevent users from listing the directory
 %attr(0733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Mon Jun 28 2016 Edwin Buck <e.buck@cpanel.net> - 2.9.0-10
+- EA-4687: Relocate modsec2.cpanel.conf and modsec2.user.conf
+
+* Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 2.9.0-9
+- EA-4383: Update Release value to OBS-proof versioning
+
 * Mon May 30 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-6
 - Added explicit lua and xml2 Requires statements (EA-4433)
 - Remove mpm_itk and mod_ruid2 conflicts (EA-4433)
@@ -206,7 +230,7 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 
 * Wed Sep 12 2012 Athmane Madjoudj <athmane@fedoraproject.org> 2.6.7-2
 - Re-add mlogc sub-package for epel (#856525)
- 
+
 * Sat Aug 25 2012 Athmane Madjoudj <athmane@fedoraproject.org> 2.6.7-1
 - Update to 2.6.7
 
@@ -218,7 +242,7 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 
 * Fri Jun 22 2012 Peter Vrabec <pvrabec@redhat.com> - 2.6.6-2
 - mlogc subpackage is not provided on RHEL
- 
+
 * Thu Jun 21 2012 Peter Vrabec <pvrabec@redhat.com> - 2.6.6-1
 - upgrade
 
@@ -344,7 +368,7 @@ touch %{buildroot}/%{_httpd_confdir}/modsec2.cpanel.conf
 - Bump for new httpd
 
 * Thu Dec 1 2005 Michael Fleming <mfleming+rpm@enlartenment.com> 1.9.1-1
-- New release 1.9.1 
+- New release 1.9.1
 
 * Wed Nov 9 2005 Michael Fleming <mfleming+rpm@enlartenment.com> 1.9-1
 - New stable upstream release 1.9
