@@ -23,7 +23,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 10
+%define release_prefix 11
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -131,9 +131,12 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.cpanel.conf
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.user.conf
 # Prevent users from listing the directory
-%attr(0733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
+%attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Wed Aug 17 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-11
+- Fix permissions on modsec_audit directory (EA-5068)
+
 * Mon Jun 28 2016 Edwin Buck <e.buck@cpanel.net> - 2.9.0-10
 - EA-4687: Relocate modsec2.cpanel.conf and modsec2.user.conf
 
