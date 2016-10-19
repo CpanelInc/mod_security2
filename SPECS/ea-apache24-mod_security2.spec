@@ -42,6 +42,7 @@ BuildRequires: lua-devel >= 5.1, libxml2-devel
 Requires: lua >= 5.1, libxml2
 Requires: ea-apache24-config, ea-apache24, ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id
+Requires: ea-modsec-sdbm-util
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
