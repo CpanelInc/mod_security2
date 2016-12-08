@@ -23,7 +23,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 11
+%define release_prefix 12
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -39,10 +39,11 @@ Conflicts: mod_security
 BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, libxml2-devel
-Requires: lua >= 5.1, libxml2
-Requires: ea-apache24-config, ea-apache24, ea-apache24-mmn = %{_httpd_mmn}
-Requires: ea-apache24-mod_unique_id
-Requires: ea-modsec-sdbm-util
+Requires: lua%{?_isa} >= 5.1, libxml2%{?_isa}
+Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mmn}
+Requires: ea-apache24-mod_unique_id%{?_isa}
+Requires: ea-modsec-sdbm-util%{?_isa}
+Requires: ea-apr-util%{?_isa}
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -135,6 +136,10 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Fri Dec 02 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-12
+- Enforce apr-util dependency (EA-5720)
+- Ensure dependent libraries are the same arch type (EA-5720)
+
 * Wed Aug 17 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-11
 - Fix permissions on modsec_audit directory (EA-5068)
 
