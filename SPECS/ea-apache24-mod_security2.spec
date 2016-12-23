@@ -23,10 +23,11 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 12
+%define release_prefix 13
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
+Vendor: cPanel, Inc.
 Group: System Environment/Daemons
 Source: https://www.modsecurity.org/tarball/%{version}/%{upstream_name}-%{version}.tar.gz
 Source1: modsec2.conf
@@ -136,6 +137,9 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Fri Dec 16 2016 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.0-13
+- EA-5493: Added vendor field
+
 * Fri Dec 02 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-12
 - Enforce apr-util dependency (EA-5720)
 - Ensure dependent libraries are the same arch type (EA-5720)
