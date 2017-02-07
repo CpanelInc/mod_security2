@@ -3,9 +3,6 @@
 %global upstream_name modsecurity
 %global module_name mod_security2
 
-# Prevent debuginfo from being generated
-%define debug_package %{nil}
-
 # Ugly hack. Harcoded values to avoid relocation.
 %global _httpd_mmn          %(cat %{_includedir}/apache2/.mmn 2>/dev/null || echo missing-ea-apache2-devel)
 %global _httpd_confdir      %{_sysconfdir}/apache2/conf.d
@@ -23,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 13
+%define release_prefix 14
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -137,6 +134,9 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Tue Feb 07 2017 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.0-14
+- Enabled debuginfo packages
+
 * Fri Dec 16 2016 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.0-13
 - EA-5493: Added vendor field
 
