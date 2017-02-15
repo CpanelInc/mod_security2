@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 14
+%define release_prefix 15
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -43,6 +43,7 @@ Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
+Patch1: 2.9.0-rule-processing-failed-expand.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -53,6 +54,7 @@ as a powerful umbrella - shielding web applications from attacks.
 %prep
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .concurrent
+%patch1 -p1 -b .expandmsg
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -134,6 +136,9 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Wed Feb 15 2017 Dan Muey <dan@cpanel.net> - 2.9.0-15
+- EA-5805: Patch "Rule processing failed" message to include the id of the rule in question
+
 * Tue Feb 07 2017 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.0-14
 - Enabled debuginfo packages
 
