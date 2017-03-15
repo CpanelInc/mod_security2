@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 15
+%define release_prefix 16
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -34,7 +34,7 @@ Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
-BuildRequires: ea-apache24-devel libxml2-devel pcre-devel curl-devel lua-devel
+BuildRequires: ea-apache24-devel libxml2-devel pcre-devel ea-libcurl ea-libcurl-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, libxml2-devel
 Requires: lua%{?_isa} >= 5.1, libxml2%{?_isa}
@@ -42,6 +42,7 @@ Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mm
 Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
+Requires: ea-libcurl
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
 Patch1: 2.9.0-rule-processing-failed-expand.cpanel.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
@@ -71,12 +72,8 @@ as a powerful umbrella - shielding web applications from attacks.
 %configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
-           --with-apxs=%{_httpd_apxs}
-# TODO: If we ever need to link off of our versions of software in /opt/cpanel,
-# then we'll want to remove these 2 lines since hard-coding rpath is an intricate
-# part of using cpanel SCL libraries.
-%{__sed} -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-%{__sed} -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+           --with-apxs=%{_httpd_apxs} \
+           --with-curl=/opt/cpanel/libcurl
 
 %{__make} %{_smp_mflags}
 
@@ -136,6 +133,9 @@ as a powerful umbrella - shielding web applications from attacks.
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
 %changelog
+* Mon Mar 06 2017 Dan Muey <dan@cpanel.net> - 2.9.0-16
+- ZC-2469: Use ea-libcurl* instead of system curl
+
 * Wed Feb 15 2017 Dan Muey <dan@cpanel.net> - 2.9.0-15
 - EA-5805: Patch "Rule processing failed" message to include the id of the rule in question
 
