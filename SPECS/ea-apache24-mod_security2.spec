@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.0
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 16
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -51,6 +51,16 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 ModSecurity is an open source intrusion detection and prevention engine
 for web applications. It operates embedded into the web server, acting
 as a powerful umbrella - shielding web applications from attacks.
+
+%package -n     ea-apache24-mod_security2-mlogc
+Summary:        ModSecurity Audit Log Collector
+Group:          System Environment/Daemons
+Requires:       ea-apache24-mod_security2
+Conflicts:      mlogc
+
+%description -n ea-apache24-mod_security2-mlogc
+This package contains the ModSecurity Audit Log Collector.
+
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
@@ -94,6 +104,14 @@ as a powerful umbrella - shielding web applications from attacks.
 %{__install} %{SOURCE4}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.cpanel.conf
 %{__mkdir_p} %{buildroot}/%{_httpd_dir}/logs/modsec_audit
 
+# mlogc
+install -d %{buildroot}%{_localstatedir}/log/mlogc
+install -d %{buildroot}%{_localstatedir}/log/mlogc/data
+install -d %{buildroot}%{_bindir}
+install -m0755 mlogc/mlogc %{buildroot}%{_bindir}/mlogc
+install -m0755 mlogc/mlogc-batch-load.pl %{buildroot}%{_bindir}/mlogc-batch-load
+install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
+
 %clean
 %{__rm} -rf %{buildroot}
 
@@ -132,7 +150,19 @@ as a powerful umbrella - shielding web applications from attacks.
 # Prevent users from listing the directory
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 
+%files -n ea-apache24-mod_security2-mlogc
+%defattr (-,root,root)
+%doc mlogc/INSTALL
+%attr(0640,root,apache) %config(noreplace) %{_sysconfdir}/mlogc.conf
+%attr(0755,root,root) %dir %{_localstatedir}/log/mlogc
+%attr(0770,root,apache) %dir %{_localstatedir}/log/mlogc/data
+%attr(0755,root,root) %{_bindir}/mlogc
+%attr(0755,root,root) %{_bindir}/mlogc-batch-load
+
 %changelog
+* Fri May 05 2017 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.0-17
+- EA-5950: Added mlogc package
+
 * Mon Mar 06 2017 Dan Muey <dan@cpanel.net> - 2.9.0-16
 - ZC-2469: Use ea-libcurl* instead of system curl
 
