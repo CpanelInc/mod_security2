@@ -1,0 +1,43 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Cory McIntire <cory@cpanel.net>
+Date: Fri, 17 Nov 2017 12:49:23 -0600
+Subject: [PATCH 1/2] apply PCRE config RPATH patch
+
+Case EA-6376: mod_security2.so has faulty RPATH
+Updated find_pcre.m4 to handle libpcre.so installed in system
+library search paths.
+---
+ apache2/Makefile.am | 2 +-
+ build/find_pcre.m4  | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/apache2/Makefile.am b/apache2/Makefile.am
+index e7bf787..15fd204 100644
+--- a/apache2/Makefile.am
++++ b/apache2/Makefile.am
+@@ -118,7 +118,7 @@ mod_security2_la_LDFLAGS = -module -avoid-version \
+ endif
+ 
+ if LINUX
+-mod_security2_la_LDFLAGS = -no-undefined -module -avoid-version -R @PCRE_LD_PATH@ \
++mod_security2_la_LDFLAGS = -no-undefined -module -avoid-version @PCRE_LD_PATH@ \
+     @APR_LDFLAGS@ \
+     @APU_LDFLAGS@ \
+     @APXS_LDFLAGS@ \
+diff --git a/build/find_pcre.m4 b/build/find_pcre.m4
+index f5da40a..04ef118 100644
+--- a/build/find_pcre.m4
++++ b/build/find_pcre.m4
+@@ -67,6 +67,9 @@ if test -n "${pcre_path}"; then
+     PCRE_LDADD="`${PCRE_CONFIG} --libs`"
+     if test "$verbose_output" -eq 1; then AC_MSG_NOTICE(pcre LDADD: $PCRE_LDADD); fi
+     PCRE_LD_PATH="/`${PCRE_CONFIG} --libs | cut -d'/' -f2,3,4,5,6 | cut -d ' ' -f1`"
++      if test "x`${PCRE_CONFIG} --libs | grep /`" != "x"; then
++         PCRE_LD_PATH="-R /`${PCRE_CONFIG} --libs | cut -d'/' -f2,3,4,5,6 | cut -d ' ' -f1`"
++      fi
+     if test "$verbose_output" -eq 1; then AC_MSG_NOTICE(pcre PCRE_LD_PATH: $PCRE_LD_PATH); fi
+ else
+     AC_MSG_RESULT([no])
+-- 
+2.15.0
+

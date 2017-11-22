@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 1
+%define release_prefix 2
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -44,6 +44,8 @@ Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 Requires: ea-libcurl
 Patch0: 2.8.0-concurrent-logging.cpanel.patch
+Patch1: 0001-apply-PCRE-config-RPATH-patch.patch
+Patch2: 0002-configure_makefile.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -64,6 +66,8 @@ This package contains the ModSecurity Audit Log Collector.
 %prep
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .concurrent
+%patch1 -p1 -b .applypcreconfig
+%patch2 -p1 -b .configmakefile
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -75,6 +79,8 @@ This package contains the ModSecurity Audit Log Collector.
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
     -e "s|@HTTPD_CONFDIR@|%{_httpd_confdir}|" \
     %{SOURCE4} > %{SOURCE4}.new
+
+find . -type f -exec touch -r ./configure \{\} \;
 
 %build
 %configure --enable-pcre-match-limit=1000000 \
@@ -158,6 +164,10 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Nov 17 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-2
+- EA-6376: Fix faulty RPATH
+- EA-6376: update timestamps on files to allow patches to succeed.
+
 * Mon Jul 24 2017 Jacob Perkins <jacob.perkins@cpanel.net> - 2.9.2-1
 - EA-6312: Update ModSec to 2.9.2
 - Removed RuleProcessingFailedExpand patch as it was fixed upstream
