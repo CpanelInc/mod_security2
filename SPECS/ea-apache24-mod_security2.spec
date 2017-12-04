@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 2
+%define release_prefix 3
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -157,13 +157,16 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %files -n ea-apache24-mod_security2-mlogc
 %defattr (-,root,root)
 %doc mlogc/INSTALL
-%attr(0640,root,apache) %config(noreplace) %{_sysconfdir}/mlogc.conf
+%attr(0640,root,root) %config(noreplace) %{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %dir %{_localstatedir}/log/mlogc
-%attr(0770,root,apache) %dir %{_localstatedir}/log/mlogc/data
+%attr(0770,root,root) %dir %{_localstatedir}/log/mlogc/data
 %attr(0755,root,root) %{_bindir}/mlogc
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Nov 30 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-3
+- EA-6984: Change file perms from apache group to root group
+
 * Fri Nov 17 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-2
 - EA-6376: Fix faulty RPATH
 - EA-6376: update timestamps on files to allow patches to succeed.
