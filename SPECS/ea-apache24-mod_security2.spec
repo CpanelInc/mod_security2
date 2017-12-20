@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 3
+%define release_prefix 4
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -43,9 +43,10 @@ Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 Requires: ea-libcurl
-Patch0: 2.8.0-concurrent-logging.cpanel.patch
-Patch1: 0001-apply-PCRE-config-RPATH-patch.patch
-Patch2: 0002-configure_makefile.patch
+Patch0: 0001-PCRE-config-RPATH-adjustment.patch
+Patch1: 0002-Concurrent-logging-adjustment-to-fix-setuid-Apache.patch
+Patch2: 0003-SecConnWriteStateLimit-DoS-fix.patch
+Patch3: 0004-Configure-and-Makefile-adjustments.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -65,9 +66,10 @@ This package contains the ModSecurity Audit Log Collector.
 
 %prep
 %setup -q -n %{upstream_name}-%{version}
-%patch0 -p1 -b .concurrent
-%patch1 -p1 -b .applypcreconfig
-%patch2 -p1 -b .configmakefile
+%patch0 -p1 -b .pcrerpath
+%patch1 -p1 -b .concurrentlogging
+%patch2 -p1 -b .secconnwritestatelimit
+%patch3 -p1 -b .configuremakefile
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -164,6 +166,10 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Tue Dec 12 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-4
+- EA-6863: Applied patch for DoS protection logic fix
+- Cleaned up patchset
+
 * Thu Nov 30 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-3
 - EA-6984: Change file perms from apache group to root group
 

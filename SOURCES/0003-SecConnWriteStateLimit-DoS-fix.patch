@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Cory McIntire <cory@cpanel.net>
+Date: Tue, 12 Dec 2017 10:10:05 -0600
+Subject: [PATCH 3/4] SecConnWriteStateLimit DoS fix
+
+SecConnWriteStateLimit is not obeyed with our current deployed
+mod security version, which makes defending against slow HTTP
+attacks impossible with modsec.
+
+(submitted by Gary Stanley)
+---
+ apache2/mod_security2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/apache2/mod_security2.c b/apache2/mod_security2.c
+index b6e98e9..fb39936 100644
+--- a/apache2/mod_security2.c
++++ b/apache2/mod_security2.c
+@@ -1597,7 +1597,7 @@ static int hook_connection_early(conn_rec *conn)
+                     "Possible DoS Consumption Attack [Rejected]", ip_count_w,
+                     conn_write_state_limit, client_ip);
+ 
+-                if (!conn_limits_filter_state == MODSEC_ENABLED)
++                if (conn_limits_filter_state == MODSEC_ENABLED)
+                     return OK;
+             }
+         }

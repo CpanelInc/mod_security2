@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Cory McIntire <cory@cpanel.net>
-Date: Fri, 17 Nov 2017 12:49:23 -0600
-Subject: [PATCH 1/2] apply PCRE config RPATH patch
+Date: Tue, 12 Dec 2017 10:04:39 -0600
+Subject: [PATCH 1/4] PCRE config RPATH adjustment
 
 Case EA-6376: mod_security2.so has faulty RPATH
 Updated find_pcre.m4 to handle libpcre.so installed in system
@@ -38,6 +38,3 @@ index f5da40a..04ef118 100644
      if test "$verbose_output" -eq 1; then AC_MSG_NOTICE(pcre PCRE_LD_PATH: $PCRE_LD_PATH); fi
  else
      AC_MSG_RESULT([no])
--- 
-2.15.0
-
