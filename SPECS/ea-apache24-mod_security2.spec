@@ -89,7 +89,8 @@ find . -type f -exec touch -r ./configure \{\} \;
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs} \
-           --with-curl=/opt/cpanel/libcurl
+           --with-curl=/opt/cpanel/libcurl \
+           --with-libxml=/opt/cpanel/ea-libxml2
 
 %{__make} %{_smp_mflags}
 
