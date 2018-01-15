@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 4
+%define release_prefix 6
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -34,10 +34,10 @@ Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
-BuildRequires: ea-apache24-devel libxml2-devel pcre-devel ea-libcurl ea-libcurl-devel lua-devel
+BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel ea-libcurl ea-libcurl-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
-BuildRequires: lua-devel >= 5.1, libxml2-devel
-Requires: lua%{?_isa} >= 5.1, libxml2%{?_isa}
+BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
+Requires: lua%{?_isa} >= 5.1, ea-libxml2%{?_isa}
 Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
@@ -85,11 +85,15 @@ This package contains the ModSecurity Audit Log Collector.
 find . -type f -exec touch -r ./configure \{\} \;
 
 %build
+
+export LDFLAGS="-Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
+
 %configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs} \
-           --with-curl=/opt/cpanel/libcurl
+           --with-curl=/opt/cpanel/libcurl \
+           --with-libxml=/opt/cpanel/ea-libxml2
 
 %{__make} %{_smp_mflags}
 
@@ -166,6 +170,12 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Jan 11 2018 <dan@cpanel.net> - 2.9.2-6
+- EA-7098: fix rpath to allow to build against ea-libxml2 libs
+
+* Wed Dec 27 2017 <cory@cpanel.net> - 2.9.2-5
+- EA-7044: Adjust mod_security to use ea-libxml2
+
 * Tue Dec 12 2017 Cory McIntire <cory@cpanel.net> - 2.9.2-4
 - EA-6863: Applied patch for DoS protection logic fix
 - Cleaned up patchset
