@@ -20,7 +20,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 6
+%define release_prefix 7
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -47,6 +47,8 @@ Patch0: 0001-PCRE-config-RPATH-adjustment.patch
 Patch1: 0002-Concurrent-logging-adjustment-to-fix-setuid-Apache.patch
 Patch2: 0003-SecConnWriteStateLimit-DoS-fix.patch
 Patch3: 0004-Configure-and-Makefile-adjustments.patch
+Patch4: 0005-Do-not-generate-SecHashKey-when-SecHashEngine-isn-t-.patch
+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
 %description
@@ -70,6 +72,7 @@ This package contains the ModSecurity Audit Log Collector.
 %patch1 -p1 -b .concurrentlogging
 %patch2 -p1 -b .secconnwritestatelimit
 %patch3 -p1 -b .configuremakefile
+%patch4 -p1 -b .sechashkey
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -170,6 +173,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Wed Feb 28 2018 Daniel Muey <dan@cpanel.net> - 2.9.2-7
+- EA-7263: Do not generate SecHashKey when SecHashEngine isn’t on
+
 * Thu Jan 11 2018 <dan@cpanel.net> - 2.9.2-6
 - EA-7098: fix rpath to allow to build against ea-libxml2 libs
 
