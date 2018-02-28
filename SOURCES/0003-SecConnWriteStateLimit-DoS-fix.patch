@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Cory McIntire <cory@cpanel.net>
 Date: Tue, 12 Dec 2017 10:10:05 -0600
-Subject: [PATCH 3/4] SecConnWriteStateLimit DoS fix
+Subject: [PATCH 3/5] SecConnWriteStateLimit DoS fix
 
 SecConnWriteStateLimit is not obeyed with our current deployed
 mod security version, which makes defending against slow HTTP
