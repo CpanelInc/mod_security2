@@ -16,11 +16,13 @@
 %global _httpd_apxs         %{_sbindir}/apxs
 %endif
 
+%define ea_libcurl_ver 7.58.0-5
+
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 7
+%define release_prefix 8
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -34,7 +36,9 @@ Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
-BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel ea-libcurl ea-libcurl-devel lua-devel
+BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel lua-devel
+BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
+BuildRequires: ea-libcurl-devel >= %{ea_libcurl_ver}
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
 Requires: lua%{?_isa} >= 5.1, ea-libxml2%{?_isa}
@@ -42,7 +46,7 @@ Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mm
 Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
-Requires: ea-libcurl
+Requires: ea-libcurl >= %{ea_libcurl_ver}
 Patch0: 0001-PCRE-config-RPATH-adjustment.patch
 Patch1: 0002-Concurrent-logging-adjustment-to-fix-setuid-Apache.patch
 Patch2: 0003-SecConnWriteStateLimit-DoS-fix.patch
@@ -173,6 +177,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Mar 30 2018 Cory McIntire <cory@cpanel.net> - 2.9.2-8
+- ZC-3552: Add versioning for ea-libcurl requirements
+
 * Wed Feb 28 2018 Daniel Muey <dan@cpanel.net> - 2.9.2-7
 - EA-7263: Do not generate SecHashKey when SecHashEngine isn’t on
 
