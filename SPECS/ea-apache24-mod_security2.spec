@@ -22,7 +22,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 9
+%define release_prefix 10
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -177,6 +177,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Mon Dec 17 2018 Cory McIntire <cory@cpanel.net> - 2.9.2-10
+- EA-8080: Fix typos in modsec2.conf comments
+
 * Mon Apr 16 2018 Rishwanth Yeddula <rish@cpanel.net> - 2.9.2-9
 - EA-7382: Update dependency on ea-libcurl to require the latest version with versioned symbols.
 
