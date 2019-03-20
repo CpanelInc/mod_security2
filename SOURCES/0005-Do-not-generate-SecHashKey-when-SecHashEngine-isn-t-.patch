@@ -1,7 +1,11 @@
-From c9592672df7ad8dd0a96237b55c93fb00fe414f8 Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Daniel Muey <dan@cpanel.net>
 Date: Wed, 28 Feb 2018 12:04:52 -0600
-Subject: [PATCH 5/5] Do not generate SecHashKey when SecHashEngine isn’t on
+Subject: [PATCH 5/6] =?UTF-8?q?Do=20not=20generate=20SecHashKey=20when=20S?=
+ =?UTF-8?q?ecHashEngine=20isn=E2=80=99t=20on?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 ---
  apache2/apache2_config.c | 9 +++++++--
@@ -27,4 +31,3 @@ index ce97950..9a7b7b5 100644
      if (dcfg->crypto_key_add == NOT_SET) dcfg->crypto_key_add = HASH_KEYONLY;
      if (dcfg->crypto_param_name == NOT_SET_P) dcfg->crypto_param_name = "crypt";
      if (dcfg->hash_is_enabled == NOT_SET) dcfg->hash_is_enabled = HASH_DISABLED;
-
