@@ -22,7 +22,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.2
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 10
+%define release_prefix 11
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -52,6 +52,7 @@ Patch1: 0002-Concurrent-logging-adjustment-to-fix-setuid-Apache.patch
 Patch2: 0003-SecConnWriteStateLimit-DoS-fix.patch
 Patch3: 0004-Configure-and-Makefile-adjustments.patch
 Patch4: 0005-Do-not-generate-SecHashKey-when-SecHashEngine-isn-t-.patch
+Patch5: 0006-Store-temporaries-in-the-request-pool-for-regexes-co.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -77,6 +78,7 @@ This package contains the ModSecurity Audit Log Collector.
 %patch2 -p1 -b .secconnwritestatelimit
 %patch3 -p1 -b .configuremakefile
 %patch4 -p1 -b .sechashkey
+%patch5 -p1 -b .storerequestpool
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -177,6 +179,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Wed Mar 20 2019 Cory McIntire <cory@cpanel.net> - 2.9.2-11
+- EA-8292: Add patch Store temporaries in the request pool for regexes compiled per-request.
+
 * Mon Dec 17 2018 Cory McIntire <cory@cpanel.net> - 2.9.2-10
 - EA-8080: Fix typos in modsec2.conf comments
 
@@ -232,7 +237,7 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 * Wed Aug 17 2016 S. Kurt Newman <kurt.newman@cpanel.net> - 2.9.0-11
 - Fix permissions on modsec_audit directory (EA-5068)
 
-* Mon Jun 28 2016 Edwin Buck <e.buck@cpanel.net> - 2.9.0-10
+* Mon Jun 27 2016 Edwin Buck <e.buck@cpanel.net> - 2.9.0-10
 - EA-4687: Relocate modsec2.cpanel.conf and modsec2.user.conf
 
 * Mon Jun 20 2016 Dan Muey <dan@cpanel.net> - 2.9.0-9
@@ -360,7 +365,7 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.5.13-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Wed May 3 2011 Michael Fleming <mfleming+rpm@thatfleminggent.com> - 2.5.13-1
+* Tue May 03 2011 Michael Fleming <mfleming+rpm@thatfleminggent.com> - 2.5.13-1
 - Newer upstream version
 
 * Wed Jun 30 2010 Michael Fleming <mfleming+rpm@thatfleminggent.com> - 2.5.12-3
@@ -408,7 +413,7 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 * Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 2.1.5-3
 - Autorebuild for GCC 4.3
 
-* Sat Jan 27 2008 Michael Fleming <mfleming+rpm@enlartenment.com> 2.1.5-2
+* Sun Jan 27 2008 Michael Fleming <mfleming+rpm@enlartenment.com> 2.1.5-2
 - Update to 2.1.5 (bz#425986)
 - "blocking" -> "optional_rules" per tarball ;-)
 

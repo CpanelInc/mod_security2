@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Cory McIntire <cory@cpanel.net>
 Date: Tue, 12 Dec 2017 10:08:09 -0600
-Subject: [PATCH 2/5] Concurrent logging adjustment to fix setuid Apache
+Subject: [PATCH 2/6] Concurrent logging adjustment to fix setuid Apache
 
 Case 76493: Resolve locking mutex conflicts with Apache modules
 that log as different users.  Serial logging can't be used to
