@@ -49,6 +49,7 @@ Requires: ea-apr-util%{?_isa}
 Requires: ea-libcurl >= %{ea_libcurl_ver}
 Patch0: 0001-PCRE-config-RPATH-adjustment.patch
 Patch1: 0002-Configure-and-Makefile-adjustments.patch
+Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -71,6 +72,7 @@ This package contains the ModSecurity Audit Log Collector.
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .pcrerpath
 %patch1 -p1 -b .configuremakefile
+%patch2 -p1 -b .storerequestpool
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -171,8 +173,8 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
-* Wed May 22 2019 Tim Mullin <tim@cpanel.net> - 2.9.3-1
-- EA-8081: Update ModSecurity to 2.9.3
+* Thu May 30 2019 Tim Mullin <tim@cpanel.net> - 2.9.3-1
+- EA-8506: Re-update from upstream to 2.9.3
 
 * Wed Mar 20 2019 Cory McIntire <cory@cpanel.net> - 2.9.2-11
 - EA-8292: Add patch Store temporaries in the request pool for regexes compiled per-request.
