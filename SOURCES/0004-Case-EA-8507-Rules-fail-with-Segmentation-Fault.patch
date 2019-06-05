@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Cory McIntire <cory@cpanel.net>
+Date: Wed, 5 Jun 2019 09:14:38 -0500
+Subject: [PATCH 4/4] Case EA-8507: Rules fail with Segmentation Fault
+
+Upstream patch to msc_util.c and msc_util.h until 2.9.4 is released.
+
+Fix curl callback function
+---
+ apache2/msc_util.c | 18 ++++++------------
+ apache2/msc_util.h |  4 ++--
+ 2 files changed, 8 insertions(+), 14 deletions(-)
+
+diff --git a/apache2/msc_util.c b/apache2/msc_util.c
+index d687ac4..9ba16db 100644
+--- a/apache2/msc_util.c
++++ b/apache2/msc_util.c
+@@ -2202,7 +2202,7 @@ char *resolve_relative_path(apr_pool_t *pool, const char *parent_filename, const
+ 
+ /**
+  * Decode a string that contains CSS-escaped characters.
+- * 
++ *
+  * References:
+  *     http://www.w3.org/TR/REC-CSS2/syndata.html#q4
+  *     http://www.unicode.org/roadmaps/
+@@ -2332,7 +2332,7 @@ int css_decode_inplace(unsigned char *input, long int input_len) {
+             /* No characters after backslash. */
+             else {
+                 /* Do not include backslash in output (continuation to nothing) */
+-                i++; 
++                i++;
+             }
+         }
+ 
+@@ -2561,7 +2561,7 @@ int ip_tree_from_file(TreeRoot **rtree, char *uri,
+         line++;
+         if (rc != APR_SUCCESS)
+         {
+-            *error_msg = apr_psprintf(mp, "Could not read \"%s\" line %d: %s", 
++            *error_msg = apr_psprintf(mp, "Could not read \"%s\" line %d: %s",
+                 uri, line, apr_strerror(rc, errstr, 1024));
+             return -1;
+         }
+@@ -2780,8 +2780,8 @@ int ip_tree_from_param(apr_pool_t *mp,
+ }
+ 
+ #ifdef WITH_CURL
+-size_t msc_curl_write_memory_cb(apr_pool_t *mp, void *contents, size_t size,
+-        size_t nmemb, void *userp, char **error_msg)
++size_t msc_curl_write_memory_cb(void *contents, size_t size,
++        size_t nmemb, void *userp)
+ {
+     size_t realsize = size * nmemb;
+     struct msc_curl_memory_buffer_t *mem = (struct msc_curl_memory_buffer_t *)userp;
+@@ -2790,19 +2790,13 @@ size_t msc_curl_write_memory_cb(apr_pool_t *mp, void *contents, size_t size,
+     {
+         mem->memory = malloc(realsize + 1);
+         if (mem->memory == NULL) {
+-            *error_msg = apr_psprintf(mp, "Unable to allocate buffer for mem->memory");
+             return 0;
+         }
+         memset(mem->memory, '\0', sizeof(realsize + 1));
+     }
+     else
+     {
+-        void *tmp;
+-        tmp = mem->memory;
+-        tmp = realloc(mem->memory, mem->size + realsize + 1);
+-        if (tmp != NULL) {
+-            mem->memory = tmp;
+-        }
++        mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+         memset(mem->memory + mem->size, '\0', sizeof(realsize + 1));
+     }
+ 
+diff --git a/apache2/msc_util.h b/apache2/msc_util.h
+index d69b62a..f7e1280 100644
+--- a/apache2/msc_util.h
++++ b/apache2/msc_util.h
+@@ -166,8 +166,8 @@ int ip_tree_from_uri(TreeRoot **rtree, char *uri,
+ 
+ int read_line(char *buff, int size, FILE *fp);
+ 
+-size_t msc_curl_write_memory_cb(apr_pool_t *mp, void *contents, size_t size,
+-    size_t nmemb, void *userp, char **error_msg);
++size_t msc_curl_write_memory_cb(void *contents, size_t size,
++    size_t nmemb, void *userp);
+ 
+ struct msc_curl_memory_buffer_t
+ {
