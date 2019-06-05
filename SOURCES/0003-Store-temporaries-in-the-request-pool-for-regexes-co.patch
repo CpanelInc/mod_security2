@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Cory McIntire <cory@cpanel.net>
 Date: Wed, 20 Mar 2019 16:02:34 -0500
-Subject: [PATCH 3/3] Store temporaries in the request pool for regexes
+Subject: [PATCH 3/4] Store temporaries in the request pool for regexes
  compiled per-request.
 
 The code for testing regexes with embedded Apache variables
