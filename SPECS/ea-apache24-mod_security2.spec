@@ -22,7 +22,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 2
+%define release_prefix 3
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -175,6 +175,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Mon Oct 14 2019 Daniel Muey <dan@cpanel.net> - 2.9.3-3
+- ZC-5192: Add find-latest-version script for `et update` support
+
 * Wed Jun 05 2019 Cory McIntire <cory@cpanel.net> - 2.9.3-2
 - EA-8507: Apply upstream patch to fix curl call segfaults
 
