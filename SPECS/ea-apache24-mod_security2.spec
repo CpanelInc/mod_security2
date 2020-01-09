@@ -22,7 +22,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 3
+%define release_prefix 4
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -41,6 +41,10 @@ BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
 BuildRequires: ea-libcurl-devel >= %{ea_libcurl_ver}
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
+%if 0%{?rhel} >= 7
+BuildRequires: yajl yajl-devel
+Requires: yajl
+%endif
 Requires: lua%{?_isa} >= 5.1, ea-libxml2%{?_isa}
 Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mmn}
 Requires: ea-apache24-mod_unique_id%{?_isa}
@@ -175,6 +179,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Dec 19 2019 Tim Mullin <tim@cpanel.net> - 2.9.3-4
+- EA-8753: Compile mod_security2 with yajl-devel for JSON
+
 * Mon Oct 14 2019 Daniel Muey <dan@cpanel.net> - 2.9.3-3
 - ZC-5192: Add find-latest-version script for `et update` support
 
