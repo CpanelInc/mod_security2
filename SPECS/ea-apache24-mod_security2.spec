@@ -16,13 +16,13 @@
 %global _httpd_apxs         %{_sbindir}/apxs
 %endif
 
-%define ea_libcurl_ver 7.59.0-2
+%define ea_libcurl_ver 7.68.0-2
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 4
+%define release_prefix 5
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -179,6 +179,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Mar 26 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-5
+- EA-8928: Updated the required version for ea-libcurl
+
 * Thu Dec 19 2019 Tim Mullin <tim@cpanel.net> - 2.9.3-4
 - EA-8753: Compile mod_security2 with yajl-devel for JSON
 
