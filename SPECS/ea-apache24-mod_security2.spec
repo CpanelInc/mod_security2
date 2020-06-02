@@ -17,6 +17,8 @@
 %endif
 
 %if 0%{?rhel} >= 8
+# On CentOS8, ea-libcurl needs libssh2 which is only available in EPEL, so for
+# now we are using system libcurl
 %define libcurl_ver 7.61.0
 %else
 %define ea_libcurl_ver 7.68.0-2
