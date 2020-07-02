@@ -16,13 +16,19 @@
 %global _httpd_apxs         %{_sbindir}/apxs
 %endif
 
+%if 0%{?rhel} >= 8
+# On CentOS8, ea-libcurl needs libssh2 which is only available in EPEL, so for
+# now we are using system libcurl
+%define libcurl_ver 7.61.0
+%else
 %define ea_libcurl_ver 7.68.0-2
+%endif
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 5
+%define release_prefix 6
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -37,8 +43,6 @@ Source4: modsec2.cpanel.conf
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
 BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel lua-devel
-BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
-BuildRequires: ea-libcurl-devel >= %{ea_libcurl_ver}
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
 %if 0%{?rhel} >= 7
@@ -50,7 +54,19 @@ Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mm
 Requires: ea-apache24-mod_unique_id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
+
+%if 0%{?rhel} >= 8
+BuildRequires: brotli
+BuildRequires: libcurl >= %{libcurl_ver}
+BuildRequires: libcurl-devel >= %{libcurl_ver}
+Requires: brotli
+Requires: libcurl >= %{libcurl_ver}
+%else
+BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
+BuildRequires: ea-libcurl-devel >= %{ea_libcurl_ver}
 Requires: ea-libcurl >= %{ea_libcurl_ver}
+%endif
+
 Patch0: 0001-PCRE-config-RPATH-adjustment.patch
 Patch1: 0002-Configure-and-Makefile-adjustments.patch
 Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
@@ -97,12 +113,21 @@ find . -type f -exec touch -r ./configure \{\} \;
 
 export LDFLAGS="-Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
 
+%if 0%{?rhel} >= 8
+%configure --enable-pcre-match-limit=1000000 \
+           --enable-pcre-match-limit-recursion=1000000 \
+           --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
+           --with-apxs=%{_httpd_apxs} \
+           --with-curl=/usr/bin/curl-config \
+           --with-libxml=/opt/cpanel/ea-libxml2
+%else
 %configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs} \
            --with-curl=/opt/cpanel/libcurl \
            --with-libxml=/opt/cpanel/ea-libxml2
+%endif
 
 %{__make} %{_smp_mflags}
 
@@ -179,6 +204,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Tue May 26 2020 Julian Brown <julian.brown@cpanel.net> - 2.9.3-6
+- ZC-6871: Fix for C8
+
 * Thu Mar 26 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-5
 - EA-8928: Updated the required version for ea-libcurl
 
