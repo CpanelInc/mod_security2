@@ -42,6 +42,8 @@ Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
 Conflicts: mod_security
+Provides: mod_security
+
 BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
