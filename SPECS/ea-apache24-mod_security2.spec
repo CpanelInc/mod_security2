@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 7
+%define release_prefix 8
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -61,10 +61,10 @@ Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 
 %if 0%{?rhel} >= 8
-BuildRequires: brotli
+BuildRequires: ea-brotli
 BuildRequires: libcurl >= %{libcurl_ver}
 BuildRequires: libcurl-devel >= %{libcurl_ver}
-Requires: brotli
+Requires: ea-brotli
 Requires: libcurl >= %{libcurl_ver}
 %else
 BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
@@ -116,7 +116,7 @@ find . -type f -exec touch -r ./configure \{\} \;
 
 %build
 
-export LDFLAGS="-Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
+export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
 
 %if 0%{?rhel} >= 8
 %configure --enable-pcre-match-limit=1000000 \
@@ -209,6 +209,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Oct 23 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-8
+- EA-9379: Build modsecurity with ea-brotli rather than brotli
+
 * Tue Sep 01 2020 Daniel Muey <dan@cpanel.net> - 2.9.3-7
 - ZC-7376: Add explicit package name conflicts for non-yum resolution
 
