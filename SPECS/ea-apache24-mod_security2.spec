@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 8
+%define release_prefix 9
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -209,6 +209,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Mon Oct 26 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-9
+- EA-9177: Set SecRequestBodyLimitAction to ProcessPartial in the conf file
+
 * Fri Oct 23 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-8
 - EA-9379: Build modsecurity with ea-brotli rather than brotli
 
