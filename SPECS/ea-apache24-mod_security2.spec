@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 9
+%define release_prefix 10
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -161,6 +161,9 @@ install -m0755 mlogc/mlogc %{buildroot}%{_bindir}/mlogc
 install -m0755 mlogc/mlogc-batch-load.pl %{buildroot}%{_bindir}/mlogc-batch-load
 install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 
+mkdir -p $RPM_BUILD_ROOT/etc/cpanel/ea4
+echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
+
 %clean
 %{__rm} -rf %{buildroot}
 
@@ -198,6 +201,7 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.user.conf
 # Prevent users from listing the directory
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
+/etc/cpanel/ea4/modsecurity.version
 
 %files -n ea-apache24-mod_security2-mlogc
 %defattr (-,root,root)
@@ -209,6 +213,9 @@ install -m0644 mlogc/mlogc-default.conf %{buildroot}%{_sysconfdir}/mlogc.conf
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Nov 19 2020 Daniel Muey <dan@cpanel.net> - 2.9.3-10
+- ZC-7925: Install /etc/cpanel/ea4/modsecurity.version
+
 * Mon Oct 26 2020 Tim Mullin <tim@cpanel.net> - 2.9.3-9
 - EA-9177: Set SecRequestBodyLimitAction to ProcessPartial in the conf file
 
