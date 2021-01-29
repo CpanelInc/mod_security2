@@ -40,7 +40,7 @@ sub _get_required {
 sub _add_sum {
     my ( $http, $hr ) = @_;
 
-    # Optional: Set $hr->{tarball}{sum}{hex} and $hr->{tarball}{sum}{type} (sha256, sha1, md5, anythign Digest.pm can handle)
+    # Optional: Set $hr->{tarball}{sum}{hex} and $hr->{tarball}{sum}{type} (sha256, sha1, md5, anything Digest.pm can handle)
     #           die if there is a problem determining either of those values
     # otherwise this is a no-op
 
