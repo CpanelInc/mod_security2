@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 10
+%define release_prefix 11
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -115,6 +115,9 @@ This package contains the ModSecurity Audit Log Collector.
 find . -type f -exec touch -r ./configure \{\} \;
 
 %build
+# Force dependency resolution to pick /usr/bin/perl instead of /bin/perl
+# This helps downstream users of our RPMS (see: EA-7468) and (EA-9583)
+export PATH="/usr/bin:$PATH"
 
 export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
 
@@ -213,6 +216,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Tue Feb 09 2021 Cory McIntire <cory@cpanel.net> - 2.9.3-11
+- EA-9427: change the PATH to use /usr/bin/ so perl doesn't conflict
+
 * Thu Nov 19 2020 Daniel Muey <dan@cpanel.net> - 2.9.3-10
 - ZC-7925: Install /etc/cpanel/ea4/modsecurity.version
 
