@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 11
+%define release_prefix 12
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -41,7 +41,10 @@ Source3: modsec2.user.conf
 Source4: modsec2.cpanel.conf
 
 # Don't allow CentOS version of mod_security to be installed to avoid confusion
+# Do not conflict against C6 since we do not build ea-modsec3+ against it -- see EA-9584 for more details on why
+%if 0%{?rhel} >= 7
 Conflicts: mod_security
+%endif
 Provides: mod_security
 
 # WHM only factors in real package names so:
@@ -216,6 +219,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Wed Feb 10 2021 Travis Holloway <t.holloway@cpanel.net> - 2.9.3-12
+- EA-9584: Update Conflicts for C6
+
 * Tue Feb 09 2021 Cory McIntire <cory@cpanel.net> - 2.9.3-11
 - EA-9427: change the PATH to use /usr/bin/ so perl doesn't conflict
 
