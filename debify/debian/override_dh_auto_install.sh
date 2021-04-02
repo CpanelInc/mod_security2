@@ -2,6 +2,8 @@
 
 source debian/vars.sh
 
+set -x
+
 rm -rf $DEB_INSTALL_ROOT
 # install module
 install -d $DEB_INSTALL_ROOT$_httpd_moddir
@@ -25,3 +27,4 @@ install -m0755 mlogc/mlogc-batch-load.pl $DEB_INSTALL_ROOT$_bindir/mlogc-batch-l
 install -m0644 mlogc/mlogc-default.conf $DEB_INSTALL_ROOT$_sysconfdir/mlogc.conf
 mkdir -p $DEB_INSTALL_ROOT/etc/cpanel/ea4
 echo -n $version > $DEB_INSTALL_ROOT/etc/cpanel/ea4/modsecurity.version
+

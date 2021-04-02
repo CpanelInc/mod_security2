@@ -1,0 +1,5 @@
+debian/tmp/etc/mlogc.conf /etc
+debian/tmp/usr/bin/mlogc /usr/bin
+debian/tmp/usr/bin/mlogc-batch-load /usr/bin
+mlogc/INSTALL /usr/share/doc/ea-apache24-mod_security2-mlogc-2.9.3
+debian/tmp/var/cpanel/log/mlogc/data /var/log/mlogc

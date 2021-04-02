@@ -12,10 +12,15 @@ sed -e "s|@HTTPD_LOGDIR@|$_httpd_logdir|" \
 sed -e "s|@HTTPD_LOGDIR@|$_httpd_logdir|" \
     -e "s|@HTTPD_CONFDIR@|$_httpd_confdir|" \
     $SOURCE4 > $SOURCE4.new
+
+echo "CONFIGURE :$ea_apr_dir: :$ea_apu_dir:"
+ls -ld /usr/bin/apxs
+
 ./configure  \
     --enable-pcre-match-limit-recursion=1000000 \
-    --with-apr=$ea_apr_dir --with-apu=$ea_apu_dir \
+    --with-apr=$ea_apr_dir \
+    --with-apu=$ea_apu_dir \
     --with-apxs=$_httpd_apxs \
     --with-curl=/usr/bin/curl-config \
-    --with-libxml
+    --with-libxma=/usrl
 make

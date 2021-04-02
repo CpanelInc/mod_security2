@@ -1,0 +1,11 @@
+debian/tmp/etc/apache2/conf.d/modsec/modsec2.cpanel.conf /etc/apache2/conf.d/modsec
+debian/tmp/etc/apache2/conf.d/modsec/modsec2.user.conf /etc/apache2/conf.d/modsec
+debian/tmp/etc/apache2/conf.d/modsec2.conf /etc/apache2/conf.d
+debian/tmp/etc/apache2/conf.modules.d/800-mod_security2.conf /etc/apache2/conf.modules.d
+debian/tmp/etc/apache2/logs/modsec_audit /etc/apache2/logs
+debian/tmp/etc/cpanel/ea4/modsecurity.version /etc/cpanel/ea4
+debian/tmp/usr/lib64/apache2/modules/mod_security2.so /usr/lib64/apache2/modules
+CHANGES /usr/share/doc/ea-apache24-mod_security2-2.9.3
+LICENSE /usr/share/doc/ea-apache24-mod_security2-2.9.3
+NOTICE /usr/share/doc/ea-apache24-mod_security2-2.9.3
+README.md /usr/share/doc/ea-apache24-mod_security2-2.9.3
