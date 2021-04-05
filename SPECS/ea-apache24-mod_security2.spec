@@ -60,7 +60,7 @@ Requires: yajl
 %endif
 Requires: lua%{?_isa} >= 5.1, ea-libxml2%{?_isa}
 Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mmn}
-Requires: ea-apache24-mod_unique_id%{?_isa}
+Requires: ea-apache24-mod-unique-id%{?-isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 
@@ -85,13 +85,14 @@ ModSecurity is an open source intrusion detection and prevention engine
 for web applications. It operates embedded into the web server, acting
 as a powerful umbrella - shielding web applications from attacks.
 
-%package -n     ea-apache24-mod_security2-mlogc
+%package -n     ea-apache24-mod-security2-mlogc
+Provides: ea-apache24-mod_security2-mlogc
 Summary:        ModSecurity Audit Log Collector
 Group:          System Environment/Daemons
-Requires:       ea-apache24-mod_security2
+Requires:       ea-apache24-mod-security2
 Conflicts:      mlogc
 
-%description -n ea-apache24-mod_security2-mlogc
+%description -n ea-apache24-mod-security2-mlogc
 This package contains the ModSecurity Audit Log Collector.
 
 
@@ -206,7 +207,7 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
 /etc/cpanel/ea4/modsecurity.version
 
-%files -n ea-apache24-mod_security2-mlogc
+%files -n ea-apache24-mod-security2-mlogc
 %defattr (-,root,root)
 %doc mlogc/INSTALL
 %attr(0640,root,root) %config(noreplace) %{_sysconfdir}/mlogc.conf
