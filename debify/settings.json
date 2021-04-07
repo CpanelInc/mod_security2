@@ -19,5 +19,8 @@
     "add_to_build_requires": [
         "libpcre3-dev",
         "libxml2"
+    ],
+    "adjust_install_file_src" : [
+        ["usr/share/doc/[^/]*/", ""]
     ]
 }
