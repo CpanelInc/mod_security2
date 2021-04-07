@@ -17,7 +17,7 @@ mkdir -p $DEB_INSTALL_ROOT$_httpd_confdir/modsec
 install $SOURCE1.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec2.conf
 install $SOURCE3.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec/modsec2.user.conf
 install $SOURCE4.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec/modsec2.cpanel.conf
-mkdir -p $DEB_INSTALL_ROOT/$_httpd_dir/logs/modsec_audit
+mkdir -p $DEB_INSTALL_ROOT/$_localstatedir/log/modsec_audit
 # mlogc
 install -d $DEB_INSTALL_ROOT$_localstatedir/log/mlogc
 install -d $DEB_INSTALL_ROOT$_localstatedir/log/mlogc/data

@@ -155,7 +155,7 @@ export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-l
 %{__install} %{SOURCE1}.new %{buildroot}%{_httpd_confdir}/modsec2.conf
 %{__install} %{SOURCE3}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.user.conf
 %{__install} %{SOURCE4}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.cpanel.conf
-%{__mkdir_p} %{buildroot}/%{_httpd_dir}/logs/modsec_audit
+%{__mkdir_p} %{buildroot}/%{_localstatedir}/logs/modsec_audit
 
 # mlogc
 install -d %{buildroot}%{_localstatedir}/log/mlogc
@@ -204,7 +204,7 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.cpanel.conf
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.user.conf
 # Prevent users from listing the directory
-%attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
+%attr(1733,root,root) %dir %{_localstatedir}/logs/modsec_audit
 /etc/cpanel/ea4/modsecurity.version
 
 %files -n ea-apache24-mod-security2-mlogc
