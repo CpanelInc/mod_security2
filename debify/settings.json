@@ -21,6 +21,11 @@
         "libxml2"
     ],
     "adjust_install_file_src" : [
+        ["usr/share/doc/[^/]+-mlogc-[^/]+/", "mlogc/"],
         ["usr/share/doc/[^/]*/", ""]
-    ]
+    ],
+    "install_directories" : {
+        "ea-apache24-mod-security2" : { "/var/log/modsec_audit" : { "mode" : "1733" } },
+        "ea-apache24-mod-security2-mlogc" : { "/var/log/mlogc/data"   : { "mode" : "0770" } }
+    }
 }
