@@ -60,7 +60,7 @@ Requires: yajl
 %endif
 Requires: lua%{?_isa} >= 5.1, ea-libxml2%{?_isa}
 Requires: ea-apache24-config, ea-apache24%{?_isa}, ea-apache24-mmn = %{_httpd_mmn}
-Requires: ea-apache24-mod-unique-id%{?-isa}
+Requires: ea-apache24-mod-unique-id%{?_isa}
 Requires: ea-modsec-sdbm-util%{?_isa}
 Requires: ea-apr-util%{?_isa}
 
