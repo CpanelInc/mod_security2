@@ -26,9 +26,9 @@
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
-Version: 2.9.3
+Version: 2.9.4
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 12
+%define release_prefix 1
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -53,6 +53,7 @@ Conflicts: ea-modsec30 ea-modsec31
 BuildRequires: ea-apache24-devel ea-libxml2-devel pcre-devel lua-devel
 BuildRequires: ea-apr-devel ea-apr-util-devel
 BuildRequires: lua-devel >= 5.1, ea-libxml2-devel
+BuildRequires: libssh2-devel krb5-devel libcom_err-devel
 %if 0%{?rhel} >= 7
 BuildRequires: yajl yajl-devel
 Requires: yajl
@@ -76,9 +77,6 @@ Requires: ea-libcurl >= %{ea_libcurl_ver}
 %endif
 
 Patch0: 0001-PCRE-config-RPATH-adjustment.patch
-Patch1: 0002-Configure-and-Makefile-adjustments.patch
-Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
-Patch3: 0004-Case-EA-8507-Rules-fail-with-Segmentation-Fault.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -98,11 +96,8 @@ This package contains the ModSecurity Audit Log Collector.
 
 
 %prep
-%setup -q -n %{upstream_name}-%{version}
+%setup -q -n ModSecurity-%{version}
 %patch0 -p1 -b .pcrerpath
-%patch1 -p1 -b .configuremakefile
-%patch2 -p1 -b .storerequestpool
-%patch3 -p1 -b .fixcurlcallback
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -123,6 +118,8 @@ find . -type f -exec touch -r ./configure \{\} \;
 export PATH="/usr/bin:$PATH"
 
 export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
+
+./autogen.sh
 
 %if 0%{?rhel} >= 8
 %configure --enable-pcre-match-limit=1000000 \
@@ -219,6 +216,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Tue Jun 22 2021 Cory McIntire <cory@cpanel.net> - 2.9.4-1
+- EA-9892: Update mod_security2 from v2.9.3 to v2.9.4
+
 * Wed Feb 10 2021 Travis Holloway <t.holloway@cpanel.net> - 2.9.3-12
 - EA-9584: Update Conflicts for C6
 
