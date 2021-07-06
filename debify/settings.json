@@ -17,6 +17,8 @@
         "_httpd_apxs": "/usr/bin/apxs"
     },
     "add_to_build_requires": [
+        "ea-apr",
+        "ea-apr-util",
         "libpcre3-dev",
         "libxml2"
     ],
