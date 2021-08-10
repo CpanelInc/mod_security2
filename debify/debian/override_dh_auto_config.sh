@@ -16,7 +16,7 @@ cp /usr/share/pkgconfig/ea-apr16-util-1.pc config
 export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:`pwd`/config"
 touch configure
 # install modsec config (cPanel & WHM expects this name.. don't change it)
-set -e "s|@HTTPD_LOGDIR@|$_httpd_logdir|" \
+sed -e "s|@HTTPD_LOGDIR@|$_httpd_logdir|" \
     -e "s|@HTTPD_CONFDIR@|$_httpd_confdir|" \
     $SOURCE1 > $SOURCE1.new
 sed -e "s|@HTTPD_LOGDIR@|$_httpd_logdir|" \
