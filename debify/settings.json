@@ -14,7 +14,8 @@
         "_httpd_confdir": "/etc/apache2/conf.d",
         "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_httpd_logdir": "/var/log/apache2",
-        "_httpd_apxs": "/usr/bin/apxs"
+        "_httpd_apxs": "/usr/bin/apxs",
+        "_sysconfdir": "/etc"
     },
     "add_to_build_requires": [
         "ea-apr",
