@@ -4,15 +4,15 @@
         "ea_apr_dir": "/opt/cpanel/ea-apr16",
         "ea_apu_dir": "/opt/cpanel/ea-apr16",
         "_httpd_mmn": "20120211x8664",
-        "_httpd_dir": "/etc/apache2",
-        "_httpd_bindir": "%{_httpd_dir}/bin",
-        "_httpd_modconfdir": "%{_httpd_dir}/conf.modules.d",
-        "_httpd_confdir": "%{_httpd_dir}/conf.d",
-        "_httpd_contentdir": "/usr/share/apache2",
         "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_var": ""
     },
     "override_vars": {
+        "_httpd_dir": "/etc/apache2",
+        "_httpd_bindir": "/etc/apache2/bin",
+        "_httpd_modconfdir": "/etc/apache2/conf.modules.d",
+        "_httpd_confdir": "/etc/apache2/conf.d",
+        "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_httpd_logdir": "/var/log/apache2",
         "_httpd_apxs": "/usr/bin/apxs"
     },
