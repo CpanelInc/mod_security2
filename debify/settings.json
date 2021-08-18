@@ -4,10 +4,10 @@
         "ea_apr_dir": "/opt/cpanel/ea-apr16",
         "ea_apu_dir": "/opt/cpanel/ea-apr16",
         "_httpd_mmn": "20120211x8664",
-        "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_var": ""
     },
     "override_vars": {
+        "_bindir": "/usr/bin",
         "_httpd_dir": "/etc/apache2",
         "_httpd_bindir": "/etc/apache2/bin",
         "_httpd_modconfdir": "/etc/apache2/conf.modules.d",
