@@ -15,7 +15,8 @@
         "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_httpd_logdir": "/var/log/apache2",
         "_httpd_apxs": "/usr/bin/apxs",
-        "_sysconfdir": "/etc"
+        "_sysconfdir": "/etc",
+        "_localstatedir": "/var"
     },
     "add_to_build_requires": [
         "ea-apr",
@@ -28,7 +29,7 @@
         ["usr/share/doc/[^/]*/", ""]
     ],
     "install_directories" : {
-        "ea-apache24-mod-security2" : { "/var/log/modsec_audit" : { "mode" : "1733" } },
+        "ea-apache24-mod-security2" : { "/var/log/apache2/modsec_audit" : { "mode" : "1733" } },
         "ea-apache24-mod-security2-mlogc" : { "/var/log/mlogc/data"   : { "mode" : "0770" } }
     }
 }

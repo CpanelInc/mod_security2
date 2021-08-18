@@ -16,7 +16,7 @@ mkdir -p $DEB_INSTALL_ROOT$_httpd_confdir/modsec
 install $SOURCE1.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec2.conf
 install $SOURCE3.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec/modsec2.user.conf
 install $SOURCE4.new $DEB_INSTALL_ROOT$_httpd_confdir/modsec/modsec2.cpanel.conf
-mkdir -p $DEB_INSTALL_ROOT/$_localstatedir/log/modsec_audit
+mkdir -p $DEB_INSTALL_ROOT/$_localstatedir/log/apache2/modsec_audit
 # mlogc
 install -d $DEB_INSTALL_ROOT$_localstatedir/log/mlogc
 install -d $DEB_INSTALL_ROOT$_localstatedir/log/mlogc/data
@@ -42,7 +42,7 @@ cp debian/tmp/opt/cpanel/root/etc/apache2/conf.d/modsec2.conf                   
 cp debian/tmp/opt/cpanel/root/etc/apache2/conf.modules.d/800-mod_security2.conf debian/tmp/etc/apache2/conf.modules.d/800-mod_security2.conf
 cp debian/tmp/opt/cpanel/root/usr/lib64/apache2/modules/mod_security2.so        debian/tmp/usr/lib64/apache2/modules/mod_security2.so
 cp debian/tmp/opt/cpanel/root/usr/bin/mlogc                                     debian/tmp/usr/bin/mlogc
-cp debian/tmp/opt/cpanel/root/etc/mlogc.conf                                    debian/tmp/etc/mlogc.conf 
+cp debian/tmp/opt/cpanel/root/etc/mlogc.conf                                    debian/tmp/etc/mlogc.conf
 cp debian/tmp/opt/cpanel/root/usr/bin/mlogc-batch-load                          debian/tmp/usr/bin/mlogc-batch-load
 
 echo "FILELIST"
