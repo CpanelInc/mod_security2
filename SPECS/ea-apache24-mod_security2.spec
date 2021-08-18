@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.4
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 1
+%define release_prefix 2
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -154,7 +154,7 @@ export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-l
 %{__install} %{SOURCE1}.new %{buildroot}%{_httpd_confdir}/modsec2.conf
 %{__install} %{SOURCE3}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.user.conf
 %{__install} %{SOURCE4}.new %{buildroot}%{_httpd_confdir}/modsec/modsec2.cpanel.conf
-%{__mkdir_p} %{buildroot}/%{_httpd_dir}/logs/modsec_audit
+%{__mkdir_p} %{buildroot}/%{_localstatedir}/logs/modsec_audit
 
 # mlogc
 install -d %{buildroot}%{_localstatedir}/log/mlogc
@@ -203,7 +203,7 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.cpanel.conf
 %attr(0600,root,root) %config(noreplace) %{_httpd_confdir}/modsec/modsec2.user.conf
 # Prevent users from listing the directory
-%attr(1733,root,root) %dir %{_httpd_dir}/logs/modsec_audit
+%attr(1733,root,root) %dir %{_localstatedir}/logs/modsec_audit
 /etc/cpanel/ea4/modsecurity.version
 
 %files -n ea-apache24-mod_security2-mlogc
@@ -216,6 +216,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Jul 09 2021 Julian Brown <julian.brown@webpros.com> - 2.9.4-2
+- ZC-8704: Build for Ubuntu, and minor changes for CentOS
+
 * Tue Jun 22 2021 Cory McIntire <cory@cpanel.net> - 2.9.4-1
 - EA-9892: Update mod_security2 from v2.9.3 to v2.9.4
 
