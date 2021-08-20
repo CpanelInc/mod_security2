@@ -4,10 +4,10 @@
         "ea_apr_dir": "/opt/cpanel/ea-apr16",
         "ea_apu_dir": "/opt/cpanel/ea-apr16",
         "_httpd_mmn": "20120211x8664",
-        "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_var": ""
     },
     "override_vars": {
+        "_bindir": "/usr/bin",
         "_httpd_dir": "/etc/apache2",
         "_httpd_bindir": "/etc/apache2/bin",
         "_httpd_modconfdir": "/etc/apache2/conf.modules.d",
@@ -15,7 +15,8 @@
         "_httpd_moddir": "/usr/lib64/apache2/modules",
         "_httpd_logdir": "/var/log/apache2",
         "_httpd_apxs": "/usr/bin/apxs",
-        "_sysconfdir": "/etc"
+        "_sysconfdir": "/etc",
+        "_localstatedir": "/var"
     },
     "add_to_build_requires": [
         "ea-apr",
@@ -28,7 +29,7 @@
         ["usr/share/doc/[^/]*/", ""]
     ],
     "install_directories" : {
-        "ea-apache24-mod-security2" : { "/var/log/modsec_audit" : { "mode" : "1733" } },
+        "ea-apache24-mod-security2" : { "/etc/apache2/logs/modsec_audit" : { "mode" : "1733" } },
         "ea-apache24-mod-security2-mlogc" : { "/var/log/mlogc/data"   : { "mode" : "0770" } }
     }
 }
