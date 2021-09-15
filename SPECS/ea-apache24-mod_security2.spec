@@ -26,9 +26,9 @@
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
-Version: 2.9.4
+Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 3
+%define release_prefix 13
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
