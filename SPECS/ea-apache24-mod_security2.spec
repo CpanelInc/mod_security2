@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 13
+%define release_prefix 14
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -219,14 +219,11 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
-* Wed Aug 18 2021 Daniel Muey <dan@cpanel.net> - 2.9.4-3
+* Wed Aug 18 2021 Daniel Muey <dan@cpanel.net> - 2.9.3-14
 - ZC-9217: fix the RPM path for modsec_audit
 
-* Fri Jul 09 2021 Julian Brown <julian.brown@webpros.com> - 2.9.4-2
+* Fri Jul 09 2021 Julian Brown <julian.brown@webpros.com> - 2.9.3-13
 - ZC-8704: Build for Ubuntu, and minor changes for CentOS
-
-* Tue Jun 22 2021 Cory McIntire <cory@cpanel.net> - 2.9.4-1
-- EA-9892: Update mod_security2 from v2.9.3 to v2.9.4
 
 * Wed Feb 10 2021 Travis Holloway <t.holloway@cpanel.net> - 2.9.3-12
 - EA-9584: Update Conflicts for C6
