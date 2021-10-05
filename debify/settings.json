@@ -22,7 +22,9 @@
         "ea-apr",
         "ea-apr-util",
         "libpcre3-dev",
-        "libxml2"
+        "libxml2",
+        "libyajl2",
+        "libyajl-dev"
     ],
     "adjust_install_file_src" : [
         ["usr/share/doc/[^/]+-mlogc-[^/]+/", "mlogc/"],
@@ -31,5 +33,8 @@
     "install_directories" : {
         "ea-apache24-mod-security2" : { "/etc/apache2/logs/modsec_audit" : { "mode" : "1733" } },
         "ea-apache24-mod-security2-mlogc" : { "/var/log/mlogc/data"   : { "mode" : "0770" } }
-    }
+    },
+    "remove_from_requires": [
+        "yajl-devel"
+    ]
 }
