@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Cory McIntire <cory@cpanel.net>
 Date: Wed, 5 Jun 2019 09:14:38 -0500
-Subject: [PATCH 4/4] Case EA-8507: Rules fail with Segmentation Fault
+Subject: [PATCH 4/5] Case EA-8507: Rules fail with Segmentation Fault
 
 Upstream patch to msc_util.c and msc_util.h until 2.9.4 is released.
 

@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Gary Stanley <gary@cpanel.net>
+Date: Sat, 23 Oct 2021 17:43:10 +0000
+Subject: [PATCH 5/5] Fix httpd.conf.in template so that
+ tests/run-regression-tests.pl functions with EA out-of-box.
+
+---
+ .../regression/server_root/conf/httpd.conf.in | 25 ++++++++-----------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
+
+diff --git a/tests/regression/server_root/conf/httpd.conf.in b/tests/regression/server_root/conf/httpd.conf.in
+index 840d5f3..fc58190 100644
+--- a/tests/regression/server_root/conf/httpd.conf.in
++++ b/tests/regression/server_root/conf/httpd.conf.in
+@@ -1,26 +1,21 @@
+ ### Base configuration for starting Apache httpd
+ 
++<IfModule !mpm_prefork_module.c>
++  LoadModule mpm_prefork_module @APXS_LIBEXECDIR@/mod_mpm_prefork.so
++</IfModule>
++
++LoadModule access_compat_module @APXS_LIBEXECDIR@/mod_access_compat.so
++LoadModule authn_core_module @APXS_LIBEXECDIR@/mod_authn_core.so
++LoadModule authz_core_module @APXS_LIBEXECDIR@/mod_authz_core.so
+ LoadModule proxy_module @APXS_LIBEXECDIR@/mod_proxy.so
+ LoadModule proxy_http_module @APXS_LIBEXECDIR@/mod_proxy_http.so
+ LoadModule unique_id_module @APXS_LIBEXECDIR@/mod_unique_id.so
++LoadModule unixd_module @APXS_LIBEXECDIR@/mod_unixd.so
+ # TODO: Need to have these configurable
+ LoadModule security2_module @MSC_BASE_DIR@/apache2/.libs/mod_security2.so
+ 
+-<IfModule !mod_version.c>
+-    LoadModule version_module @APXS_LIBEXECDIR@/mod_version.so
+-</IfModule>
+-
+-<IfVersion >= 2.4>
+-    <IfModule !mod_unixd.c>
+-        LoadModule unixd_module @APXS_LIBEXECDIR@/mod_unixd.so
+-    </IfModule>
+-    <IfModule !mpm_worker_module>
+-	LoadModule mpm_worker_module @APXS_LIBEXECDIR@/mod_mpm_worker.so
+-    </IfModule>
+-    LoadModule access_compat_module @APXS_LIBEXECDIR@/mod_access_compat.so
+-    LoadModule authn_core_module @APXS_LIBEXECDIR@/mod_authn_core.so
+-    LoadModule authz_core_module @APXS_LIBEXECDIR@/mod_authz_core.so
+-</IfVersion>
++# Needed for root httpd runs.
++Mutex posixsem
+ 
+ ServerName localhost
+ CoreDumpDirectory @MSC_REGRESSION_SERVERROOT_DIR@/tmp
