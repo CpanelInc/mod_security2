@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 14
+%define release_prefix 15
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -79,6 +79,7 @@ Patch0: 0001-PCRE-config-RPATH-adjustment.patch
 Patch1: 0002-Configure-and-Makefile-adjustments.patch
 Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
 Patch3: 0004-Case-EA-8507-Rules-fail-with-Segmentation-Fault.patch
+Patch4: 0005-Fix-httpd.conf.in-template-so-that-tests-run-regress.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -103,6 +104,7 @@ This package contains the ModSecurity Audit Log Collector.
 %patch1 -p1 -b .configuremakefile
 %patch2 -p1 -b .storerequestpool
 %patch3 -p1 -b .fixcurlcallback
+%patch4 -p1 -b .runregressiontests
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -219,6 +221,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Nov 12 2021 Travis Holloway <t.holloway@cpanel.net> - 2.9.3-15
+- EA-10229: Add patch to allow run-regression-tests.pl to function with EA4
+
 * Wed Aug 18 2021 Daniel Muey <dan@cpanel.net> - 2.9.3-14
 - ZC-9217: fix the RPM path for modsec_audit
 
