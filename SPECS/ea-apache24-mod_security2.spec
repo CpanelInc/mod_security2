@@ -28,7 +28,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 16
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -223,6 +223,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Tue Jan 11 2022 Julian Brown <julian.brown@cpanel.net> - 2.9.3-17
+- ZC-9641: Rebuilt to include libcurl4 and libgnutls
+
 * Mon Jan 03 2022 Travis Holloway <t.holloway@cpanel.net> - 2.9.3-16
 - EA-10203: Add patch to fix memory leaks
 
