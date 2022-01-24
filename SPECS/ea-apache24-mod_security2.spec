@@ -10,6 +10,10 @@
 %global _httpd_modconfdir   %{_sysconfdir}/apache2/conf.modules.d
 %global _httpd_logdir       %{_var}/log/apache2
 
+# Change to use higher optimization level
+# By adding -O3 to the end, it will overide any other "-O" settings
+%global optflags %{optflags} -O3
+
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 6
 %global _httpd_apxs         %{_bindir}/apxs
 %else
@@ -28,7 +32,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 17
+%define release_prefix 18
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -223,6 +227,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Fri Jan 21 2022 Tim Mullin <tim@cpanel.net> - 2.9.3-18
+- EA-10239: Increase compiler optimization level to help mitigate performance loss from large rulesets
+
 * Tue Jan 11 2022 Julian Brown <julian.brown@cpanel.net> - 2.9.3-17
 - ZC-9641: Rebuilt to include libcurl4 and libgnutls
 
