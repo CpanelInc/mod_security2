@@ -37,3 +37,5 @@ ls -ld /usr/bin/apxs
     --with-curl=/usr/bin/curl-config \
     --with-libxma=/usrl
 make
+
+make test
