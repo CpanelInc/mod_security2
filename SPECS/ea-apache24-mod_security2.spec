@@ -32,7 +32,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.3
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 18
+%define release_prefix 19
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -85,6 +85,7 @@ Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
 Patch3: 0004-Case-EA-8507-Rules-fail-with-Segmentation-Fault.patch
 Patch4: 0005-Fix-httpd.conf.in-template-so-that-tests-run-regress.patch
 Patch5: 0006-Import-some-memory-leak-fixes-for-Mod-Security-2.9.x.patch
+Patch6: 0007-Allow-Lua-5.4.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -111,6 +112,7 @@ This package contains the ModSecurity Audit Log Collector.
 %patch3 -p1 -b .fixcurlcallback
 %patch4 -p1 -b .runregressiontests
 %patch5 -p1 -b .memoryleak
+%patch6 -p1 -b .lua54
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -149,6 +151,7 @@ export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-l
 %endif
 
 %{__make} %{_smp_mflags}
+%{__make} %{_smp_mflags} test
 
 %install
 %{__rm} -rf %{buildroot}
@@ -227,6 +230,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Wed Sep 21 2022 Dan Muey <dan@cpanel.net> - 2.9.3-19
+- ZC-10009: Add lua 5.4 support
+
 * Fri Jan 21 2022 Tim Mullin <tim@cpanel.net> - 2.9.3-18
 - EA-10239: Increase compiler optimization level to help mitigate performance loss from large rulesets
 
