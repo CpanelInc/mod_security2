@@ -1,6 +1,6 @@
 # Defining the package namespace
 %global ns_name ea-apache24
-%global upstream_name modsecurity
+%global upstream_name ModSecurity
 %global module_name mod_security2
 
 # Ugly hack. Harcoded values to avoid relocation.
@@ -30,15 +30,15 @@
 
 Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
-Version: 2.9.3
+Version: 2.9.6
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 19
+%define release_prefix 1
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
 Vendor: cPanel, Inc.
 Group: System Environment/Daemons
-Source: https://www.modsecurity.org/tarball/%{version}/%{upstream_name}-%{version}.tar.gz
+Source: v%{version}.tar.gz
 Source1: modsec2.conf
 Source2: loadmod.conf
 Source3: modsec2.user.conf
@@ -76,16 +76,15 @@ Requires: libcurl >= %{libcurl_ver}
 %else
 BuildRequires: ea-libcurl >= %{ea_libcurl_ver}
 BuildRequires: ea-libcurl-devel >= %{ea_libcurl_ver}
+BuildRequires: libssh2 libssh2-devel
+BuildRequires: krb5-devel
 Requires: ea-libcurl >= %{ea_libcurl_ver}
 %endif
 
 Patch0: 0001-PCRE-config-RPATH-adjustment.patch
-Patch1: 0002-Configure-and-Makefile-adjustments.patch
-Patch2: 0003-Store-temporaries-in-the-request-pool-for-regexes-co.patch
-Patch3: 0004-Case-EA-8507-Rules-fail-with-Segmentation-Fault.patch
-Patch4: 0005-Fix-httpd.conf.in-template-so-that-tests-run-regress.patch
-Patch5: 0006-Import-some-memory-leak-fixes-for-Mod-Security-2.9.x.patch
-Patch6: 0007-Allow-Lua-5.4.patch
+Patch1: 0002-Fix-httpd.conf.in-template-so-that-tests-run-regress.patch
+Patch2: 0003-Import-some-memory-leak-fixes-for-Mod-Security-2.9.x.patch
+Patch3: 0004-Allow-Lua-5.4.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-build-%(%{__id_u} -n)
 
@@ -107,12 +106,9 @@ This package contains the ModSecurity Audit Log Collector.
 %prep
 %setup -q -n %{upstream_name}-%{version}
 %patch0 -p1 -b .pcrerpath
-%patch1 -p1 -b .configuremakefile
-%patch2 -p1 -b .storerequestpool
-%patch3 -p1 -b .fixcurlcallback
-%patch4 -p1 -b .runregressiontests
-%patch5 -p1 -b .memoryleak
-%patch6 -p1 -b .lua54
+%patch1 -p1 -b .runregressiontests
+%patch2 -p1 -b .memoryleak
+%patch3 -p1 -b .lua54
 
 # install modsec config (cPanel & WHM expects this name.. don't change it)
 %{__sed} -e "s|@HTTPD_LOGDIR@|%{_httpd_logdir}|" \
@@ -134,15 +130,17 @@ export PATH="/usr/bin:$PATH"
 
 export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
 
+./autogen.sh
+
 %if 0%{?rhel} >= 8
-%configure --enable-pcre-match-limit=1000000 \
+./configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs} \
            --with-curl=/usr/bin/curl-config \
            --with-libxml=/opt/cpanel/ea-libxml2
 %else
-%configure --enable-pcre-match-limit=1000000 \
+./configure --enable-pcre-match-limit=1000000 \
            --enable-pcre-match-limit-recursion=1000000 \
            --with-apr=%{ea_apr_dir} --with-apu=%{ea_apu_dir} \
            --with-apxs=%{_httpd_apxs} \
@@ -151,7 +149,6 @@ export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-l
 %endif
 
 %{__make} %{_smp_mflags}
-%{__make} %{_smp_mflags} test
 
 %install
 %{__rm} -rf %{buildroot}
@@ -230,6 +227,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Wed Nov 23 2022 Travis Holloway <t.holloway@cpanel.net> - 2.9.6-1
+- EA-11068: Update mod_security2 from v2.9.3 to v2.9.6
+
 * Wed Sep 21 2022 Dan Muey <dan@cpanel.net> - 2.9.3-19
 - ZC-10009: Add lua 5.4 support
 
