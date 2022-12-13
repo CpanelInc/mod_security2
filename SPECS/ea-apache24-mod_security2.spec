@@ -32,7 +32,7 @@ Summary: Security module for the Apache HTTP Server
 Name: %{ns_name}-%{module_name}
 Version: 2.9.6
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4560 for more details
-%define release_prefix 1
+%define release_prefix 2
 Release: %{release_prefix}%{?dist}.cpanel
 License: ASL 2.0
 URL: http://www.modsecurity.org/
@@ -128,7 +128,7 @@ find . -type f -exec touch -r ./configure \{\} \;
 # This helps downstream users of our RPMS (see: EA-7468) and (EA-9583)
 export PATH="/usr/bin:$PATH"
 
-export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
+export LDFLAGS="-Wl,-rpath=/opt/cpanel/ea-brotli/lib -Wl,-rpath,/opt/cpanel/ea-openssl11/%{_lib} -Wl,-rpath,/opt/cpanel/ea-libxml2/%{_lib} -L/opt/cpanel/ea-libxml2/%{_lib} -lxml2 -lz -llzma -lm -ldl -Wl,-z,relro,-z,now"
 
 ./autogen.sh
 
@@ -227,6 +227,9 @@ echo -n %{version} > $RPM_BUILD_ROOT/etc/cpanel/ea4/modsecurity.version
 %attr(0755,root,root) %{_bindir}/mlogc-batch-load
 
 %changelog
+* Thu Dec 08 2022 Travis Holloway <t.holloway@cpanel.net> - 2.9.6-2
+- EA-11091: Fix linking issues on C6/C7
+
 * Wed Nov 23 2022 Travis Holloway <t.holloway@cpanel.net> - 2.9.6-1
 - EA-11068: Update mod_security2 from v2.9.3 to v2.9.6
 
