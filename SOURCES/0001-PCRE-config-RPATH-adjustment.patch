@@ -12,10 +12,10 @@ library search paths.
  2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/apache2/Makefile.am b/apache2/Makefile.am
-index e7bf787..15fd204 100644
+index 9af9633..38396bf 100644
 --- a/apache2/Makefile.am
 +++ b/apache2/Makefile.am
-@@ -118,7 +118,7 @@ mod_security2_la_LDFLAGS = -module -avoid-version \
+@@ -125,7 +125,7 @@ mod_security2_la_LDFLAGS = -module -avoid-version \
  endif
  
  if LINUX
@@ -25,7 +25,7 @@ index e7bf787..15fd204 100644
      @APU_LDFLAGS@ \
      @APXS_LDFLAGS@ \
 diff --git a/build/find_pcre.m4 b/build/find_pcre.m4
-index f5da40a..04ef118 100644
+index 0c42fed..de8ed65 100644
 --- a/build/find_pcre.m4
 +++ b/build/find_pcre.m4
 @@ -67,6 +67,9 @@ if test -n "${pcre_path}"; then
